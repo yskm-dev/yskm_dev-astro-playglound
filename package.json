@@ -1,0 +1,37 @@
+{
+  "name": "jamstack-blog-test",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "lint:ts": "eslint src --ext .ts,.tsx,.astro",
+    "lint:prettier": "prettier --check './src/**/*.{astro,js,jsx,ts,tsx,css,scss}'",
+    "lint:style": "stylelint 'src/**/*.{css,scss,astro}'",
+    "fix:ts": "eslint src --ext .ts,.tsx,.astro --fix",
+    "fix:prettier": "prettier './src/**/*.{astro,js,jsx,ts,tsx,css,scss}' --write .",
+    "fix:style": "stylelint 'src/**/*.{css,scss,astro}' --fix"
+  },
+  "dependencies": {
+    "astro": "^5.16.12"
+  },
+  "devDependencies": {
+    "@markuplint/astro-parser": "^4.6.22",
+    "@typescript-eslint/parser": "^8.53.1",
+    "eslint": "^9.39.2",
+    "eslint-plugin-astro": "^1.5.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "markuplint": "^4.14.0",
+    "postcss-html": "^1.8.1",
+    "prettier": "3.8.1",
+    "prettier-plugin-astro": "0.14.1",
+    "sass": "^1.97.3",
+    "stylelint": "^17.0.0",
+    "stylelint-config-html": "^1.1.0",
+    "stylelint-config-prettier-scss": "^1.0.0",
+    "stylelint-config-recess-order": "^7.6.0",
+    "stylelint-config-standard-scss": "^17.0.0"
+  }
+}

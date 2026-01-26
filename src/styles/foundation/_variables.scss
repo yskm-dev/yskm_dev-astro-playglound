@@ -1,0 +1,25 @@
+:root {
+  --color-text: #333;
+  --color-background: #f9f9f9;
+  --color-selected: #007acc;
+  --color-unselected: #666;
+  --color-primary: #005f99;
+  --color-primary-hover: #004f80;
+  --color-secondary: #e0e0e0;
+  --color-secondary-hover: #c0c0c0;
+  --color-border: #ddd;
+  --100vw: 100vw;
+  --1rem: 1rem;
+}
+
+@property --100vw {
+  syntax: "<length>";
+  initial-value: 0;
+  inherits: false;
+}
+
+@property --1rem {
+  syntax: "<length>";
+  initial-value: 0;
+  inherits: false;
+}

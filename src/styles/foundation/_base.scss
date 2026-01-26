@@ -1,0 +1,17 @@
+@use "../extension" as *;
+@use "../variables" as var;
+
+body {
+  padding-right: var(--scrollbar-width, 0);
+}
+
+a {
+  color: inherit;
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+:focus-visible {
+  outline: rem(2) solid var(--color-text);
+  outline-offset: rem(4);
+}

@@ -1,0 +1,17 @@
+@use "sass:math";
+@use "sass:meta";
+@use "../variables" as var;
+
+@function rem($px, $useVar: true) {
+  $one-rem: 1rem;
+
+  @if $useVar {
+    $one-rem: var.$one-rem;
+  }
+
+  @return calc($px / var.$rem * $one-rem);
+}
+
+@function px($px, $useVar: true) {
+  @return calc($px * var.$one-px);
+}
