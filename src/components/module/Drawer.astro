@@ -1,0 +1,286 @@
+---
+import IconArrow from "@/svg/icon_arrow.svg";
+import IconGithub from "@/svg/icon_github.svg";
+import IconX from "@/svg/icon_x.svg";
+import StyleButton from "@/layouts/StyleButton.astro";
+---
+
+<app-drawer class="drawerWrapper" aria-hidden="true">
+  <div class="drawer" role="dialog" id="drawer">
+    <div class="header">
+      <p class="logo">
+        <a href="/">yskm_dev</a>
+      </p>
+      <div class="header__links">
+        <StyleButton />
+        <button
+          type="button"
+          class="close"
+          aria-label="メニューを閉じる"
+          aria-expanded="false"
+          aria-controls="drawer"
+        >
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+    <nav class="nav" aria-label="サイト内ナビゲーション">
+      <ul>
+        <li>
+          <a href="/">Home</a>
+        </li>
+        <li>
+          <a href="/profile">Profile</a>
+        </li>
+        <li>
+          <a href="/notes">Notes</a>
+        </li>
+        <li>
+          <a href="/rules">Rules</a>
+        </li>
+        <li>
+          <a href="/sketch">Sketch</a>
+        </li>
+      </ul>
+    </nav>
+    <div class="stack">
+      <p class="stack__title">Built with:</p>
+      <ul>
+        <li>
+          Framework: <a href="https://astro.build/" target="_blank"
+            >Astro<IconArrow aria-hidden="true" /></a
+          >
+        </li>
+        <li>
+          Programming Language: <a
+            href="https://www.typescriptlang.org/"
+            target="_blank"
+            >TypeScript
+            <IconArrow aria-hidden="true" /></a
+          >
+        </li>
+        <li>
+          CMS: <a href="https://microcms.io/" target="_blank"
+            >MicroCMS<IconArrow aria-hidden="true" /></a
+          >
+        </li>
+        <li>
+          Hosting Platform: <a
+            href="https://pages.cloudflare.com/"
+            target="_blank">Cloudflare<IconArrow aria-hidden="true" /></a
+          >
+        </li>
+      </ul>
+    </div>
+    <ul class="social">
+      <li>
+        <a
+          href="https://github.com/yskm-dev"
+          target="_blank"
+          aria-label="GitHub"
+        >
+          <IconGithub />
+        </a>
+      </li>
+      <li>
+        <a href="https://twitter.com/yskm_dev" target="_blank" aria-label="X">
+          <IconX />
+        </a>
+      </li>
+    </ul>
+  </div>
+</app-drawer>
+
+<script>
+  export default class AppDrawer extends HTMLElement {
+    private dialog: HTMLDialogElement | null = null;
+    private close: HTMLButtonElement | null = null;
+    private isOpen: boolean = false;
+    constructor() {
+      super();
+    }
+    initialize() {
+      this.dialog = this.querySelector(".drawer") as HTMLDialogElement;
+      this.close = this.querySelector(".close") as HTMLButtonElement;
+
+      this.close?.addEventListener("click", this.toggle.bind(this));
+      this.addEventListener("drawerOpen", () => {
+        console.log("drawerOpen event received");
+
+        this.toggle();
+      });
+    }
+    connectedCallback() {
+      requestAnimationFrame(() => {
+        this.initialize();
+      });
+    }
+    disconnectedCallback() {}
+    toggle() {
+      if (!this.dialog) return;
+      if (this.isOpen) {
+        this.setAttribute("aria-hidden", "true");
+        this.isOpen = false;
+        document.body.style.overflow = ``;
+        document.body.style.touchAction = ``;
+        document.body.style.top = ``;
+        document.body.style.left = ``;
+      } else {
+        this.setAttribute("aria-hidden", "false");
+        this.isOpen = true;
+        document.body.style.overflow = "hidden";
+        document.body.style.touchAction = "none";
+        document.body.style.top = `-${window.scrollY}px`;
+        document.body.style.left = "0";
+      }
+    }
+  }
+
+  customElements.define("app-drawer", AppDrawer);
+</script>
+
+<style lang="scss">
+  @use "@/styles/variables" as var;
+  @use "@/styles/extension" as *;
+
+  .drawerWrapper {
+    &[aria-hidden="true"] {
+      pointer-events: none;
+      opacity: 0;
+    }
+  }
+
+  .drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 20;
+    width: 100%;
+    height: 100%;
+    padding: var(--margin-m);
+    margin: 0;
+    background-color: var(--color-background);
+    border: none;
+
+    &::backdrop {
+      display: none;
+    }
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .header__links {
+    display: flex;
+    gap: var(--margin-m);
+    align-items: center;
+  }
+
+  .nav {
+    padding: var(--margin-l);
+    margin-top: var(--margin-xl);
+    font-size: var(--font-size-large);
+    font-weight: 600;
+
+    ul {
+      display: grid;
+      gap: var(--margin-m);
+    }
+  }
+
+  .logo {
+    font-size: var(--font-size-heading-3);
+    font-weight: 600;
+  }
+
+  .close {
+    position: relative;
+    display: block;
+    width: rem(40);
+    height: rem(40);
+    margin: rem(8) 0;
+    background-color: var(--color-text);
+    border-radius: rem(4);
+
+    span {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: rem(24);
+      height: rem(2);
+      margin: auto;
+      background-color: var(--color-background);
+      border-radius: rem(1);
+
+      &:first-child {
+        rotate: 30deg;
+      }
+
+      &:last-child {
+        rotate: -30deg;
+      }
+    }
+  }
+
+  .stack {
+    margin-top: var(--margin-xl);
+    font-size: var(--font-size-small);
+    color: var(--color-text);
+
+    ul {
+      display: grid;
+      gap: var(--margin-xs);
+    }
+
+    svg {
+      position: relative;
+      width: rem(12);
+      height: rem(12);
+      margin-left: var(--margin-xxs);
+    }
+
+    a {
+      text-decoration: underline;
+    }
+  }
+
+  .stack__title {
+    margin-bottom: var(--margin-s);
+  }
+
+  .social {
+    display: flex;
+    gap: var(--margin-s);
+    width: fit-content;
+    margin-top: var(--margin-l);
+    color: var(--color-text);
+
+    a {
+      display: flex;
+      gap: rem(4);
+      align-items: center;
+      justify-content: space-between;
+      width: rem(24);
+      height: rem(24);
+    }
+  }
+
+  @media (hover: hover) {
+    .drawer__nav a:hover {
+      color: var(--color-primary);
+    }
+
+    .stack a:hover {
+      color: var(--color-primary);
+      text-decoration: none;
+    }
+
+    .social a:hover {
+      color: var(--color-primary);
+    }
+  }
+</style>

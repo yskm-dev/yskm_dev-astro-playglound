@@ -1,9 +1,7 @@
-@use "../extension" as *;
-@use "../variables" as var;
+@use '../extension' as *;
+@use '../variables' as var;
 
-*:where(
-  :not(html, iframe, canvas, img, svg, video, a, dialog, svg *, symbol *)
-) {
+*:where(:not(html, iframe, canvas, img, svg, video, a, dialog, svg *, symbol *)) {
   all: unset;
   display: revert;
 }
@@ -35,7 +33,7 @@ ul,
 ol,
 menu,
 details {
-  list-style-type: "";
+  list-style-type: '';
 }
 
 img,

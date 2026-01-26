@@ -1,5 +1,9 @@
 ---
-import "@/styles/global.scss";
+import Drawer from "@/components/module/Drawer.astro";
+import Footer from "@/layouts/Footer.astro";
+import Header from "@/layouts/Header.astro";
+import "@/styles/globals.scss";
+
 const { title = "Blog" } = Astro.props;
 ---
 
@@ -10,8 +14,40 @@ const { title = "Blog" } = Astro.props;
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
-    <slot />
+    <Header />
+    <main>
+      <div class="container">
+        <slot />
+      </div>
+      <Drawer />
+    </main>
+    <Footer />
   </body>
 </html>
+
+<style lang="scss">
+  @use "@/styles/variables" as var;
+  @use "@/styles/extension" as *;
+
+  .header {
+    display: block;
+  }
+
+  .main {
+    width: 100%;
+  }
+
+  .container {
+    max-width: calc(rem(640) + var(--margin-l) * 2);
+    padding: var(--margin-xxl) var(--margin-l) 0;
+    margin: auto;
+  }
+</style>
