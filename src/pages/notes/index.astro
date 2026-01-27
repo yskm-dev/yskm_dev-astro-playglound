@@ -1,49 +1,59 @@
 ---
 import NoteLink from "@/components/module/NoteLink.astro";
+import Pagination from "@/components/module/Pagination.astro";
 import Layout from "@/layouts/Layout.astro";
 import { getNotes } from "@/libs/microcms";
 const notes = await getNotes({
   fields: ["id", "title", "icon", "tags", "publishedAt"],
-  limit: 6,
+  limit: 10,
 });
+const lastPage = Math.ceil(notes.totalCount / 1);
+const urlNext = lastPage > 1 ? "/notes/page/2" : null;
 ---
 
-<Layout>
-  <p class="description">
-    主にフロントエンドの技術、Webアクセシビリティについて学んだことを発信していきます。
-  </p>
-  <h2 class="title">最近の投稿</h2>
+<Layout title="Notes">
+  <h1 class="title">Notes</h1>
   <ul class="notesList">
     {
       notes.contents.map((note) => {
         return (
-          <li class="notesItem">
+          <li>
             <NoteLink note={note} />
           </li>
         );
       })
     }
   </ul>
+  <Pagination
+    data={notes.contents}
+    currentPage={1}
+    lastPage={lastPage}
+    urlPrev={null}
+    urlNext={urlNext}
+  />
 </Layout>
 
 <style lang="scss">
   @use "@/styles/variables" as var;
   @use "@/styles/extension" as *;
 
-  .description {
-    margin-top: var(--margin-l);
-    font-weight: 600;
+  .main {
+    width: 100%;
+    max-width: calc(rem(640) + var(--margin-l) * 2);
+    padding: 0 var(--margin-l);
+    margin: auto;
   }
 
   .title {
     margin-top: var(--margin-l);
-    font-size: var(--font-size-heading-2);
+    font-size: var(--font-size-heading-1);
     font-weight: 600;
   }
 
   .notesList {
     display: grid;
     gap: var(--margin-m);
-    margin-top: var(--margin-m);
+    margin-top: var(--margin-l);
+    margin-bottom: var(--margin-l);
   }
 </style>

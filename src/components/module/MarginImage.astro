@@ -1,0 +1,121 @@
+---
+export interface Props {
+  size: "xxl" | "xl" | "l" | "m" | "s" | "xs" | "xxs";
+  label: string;
+  headingLevel?: 2 | 3 | 4 | 5 | 6;
+}
+
+const { size, label, headingLevel = 3 } = Astro.props as Props;
+const HeadingTag = `h${headingLevel}` as const;
+---
+
+<app-margin-image class="pallet" data-size={size}>
+  <HeadingTag class="heading"
+    >{size.toUpperCase()}: <span class="sizeValue"></span></HeadingTag
+  >
+  <div class="box" data-size={size} role="figure" aria-label={label}></div>
+</app-margin-image>
+
+<style lang="scss">
+  @use "@/styles/variables" as var;
+  @use "@/styles/extension" as *;
+
+  .heading {
+    margin-top: var(--margin-l);
+    margin-bottom: var(--margin-m);
+    font-size: var(--font-size-heading-3);
+    font-weight: 600;
+    line-height: var(--line-height-heading-3);
+  }
+
+  .box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: var(--margin-l);
+    font-weight: 600;
+    color: var(--color-background);
+    background-color: var(--color-text);
+
+    &[data-size="xxl"] {
+      height: var(--margin-xxl);
+      font-weight: 600;
+    }
+
+    &[data-size="xl"] {
+      height: var(--margin-xl);
+    }
+
+    &[data-size="l"] {
+      height: var(--margin-l);
+    }
+
+    &[data-size="m"] {
+      height: var(--margin-m);
+    }
+
+    &[data-size="s"] {
+      height: var(--margin-s);
+    }
+
+    &[data-size="xs"] {
+      height: var(--margin-xs);
+    }
+
+    &[data-size="xxs"] {
+      height: var(--margin-xxs);
+    }
+  }
+</style>
+
+<script>
+  // No additional script needed for this component
+  class AppMarginImage extends HTMLElement {
+    private rafId: number | null = null;
+    private resizeTimerId: number | null = null;
+    constructor() {
+      super();
+    }
+    connectedCallback() {
+      this.rafId = requestAnimationFrame(() => {
+        this.initialized();
+      });
+    }
+    disconnectedCallback() {
+      if (this.rafId !== null) {
+        cancelAnimationFrame(this.rafId);
+      }
+    }
+    initialized() {
+      const box = this.querySelector(".box") as HTMLElement;
+      const sizeValue = box
+        ? Math.floor(parseFloat(getComputedStyle(box).height)) + "px"
+        : "";
+      const text = this.querySelector(".sizeValue");
+      if (text) {
+        text.textContent = sizeValue;
+      }
+
+      document
+        .querySelector("[data-style-button]")
+        ?.addEventListener("themeChange", (event: any) => {
+          this.initialized();
+        });
+
+      // const mq = window.matchMedia("(max-width: 768px)");
+      // mq.addEventListener("change", (e) => {
+      //   this.initialized();
+      // });
+      window.addEventListener("resize", () => {
+        if (this.resizeTimerId !== null) {
+          clearTimeout(this.resizeTimerId);
+        }
+        this.resizeTimerId = window.setTimeout(() => {
+          this.initialized();
+        }, 200);
+      });
+    }
+  }
+  customElements.define("app-margin-image", AppMarginImage);
+</script>
