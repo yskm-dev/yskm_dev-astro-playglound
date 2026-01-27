@@ -39,6 +39,7 @@ const { color } = Astro.props as Props;
     }
 
     &[data-color="primary"] {
+      color: var(--color-background);
       background-color: var(--color-primary);
     }
 
@@ -46,6 +47,11 @@ const { color } = Astro.props as Props;
       color: var(--color-background);
       background-color: var(--color-secondary);
     }
+  }
+
+  :global([data-theme="light"]) .pallet[data-color="primary"] {
+    color: var(--color-text);
+    background-color: var(--color-primary);
   }
 
   .colorName {
@@ -73,6 +79,9 @@ const { color } = Astro.props as Props;
     connectedCallback() {
       this.rafId = requestAnimationFrame(() => {
         this.initialized();
+        document?.addEventListener("themeChange", (event: any) => {
+          this.initialized();
+        });
       });
     }
     disconnectedCallback() {
@@ -89,12 +98,6 @@ const { color } = Astro.props as Props;
       if (text) {
         text.textContent = colorCode.trim();
       }
-
-      document
-        .querySelector("[data-style-button]")
-        ?.addEventListener("themeChange", (event: any) => {
-          this.initialized();
-        });
     }
   }
   customElements.define("app-pallet", AppPallet);

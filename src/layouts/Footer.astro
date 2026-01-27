@@ -1,4 +1,5 @@
 ---
+import { EXTERNAL_LINKS } from "@/const/links";
 import Nav from "@/layouts/Nav.astro";
 import IconArrow from "@/svg/icon_arrow.svg";
 import IconGithub from "@/svg/icon_github.svg";
@@ -11,27 +12,26 @@ import IconX from "@/svg/icon_x.svg";
       <h2 class="stack__title">Built with:</h2>
       <ul>
         <li>
-          Framework: <a href="https://astro.build/" target="_blank"
+          Framework: <a href={EXTERNAL_LINKS.astro} target="_blank"
             >Astro<IconArrow aria-hidden="true" /></a
           >
         </li>
         <li>
           Programming Language: <a
-            href="https://www.typescriptlang.org/"
+            href={EXTERNAL_LINKS.typescript}
             target="_blank"
             >TypeScript
             <IconArrow aria-hidden="true" /></a
           >
         </li>
         <li>
-          CMS: <a href="https://microcms.io/" target="_blank"
+          CMS: <a href={EXTERNAL_LINKS.microCMS} target="_blank"
             >MicroCMS<IconArrow aria-hidden="true" /></a
           >
         </li>
         <li>
-          Hosting Platform: <a
-            href="https://pages.cloudflare.com/"
-            target="_blank">Cloudflare<IconArrow aria-hidden="true" /></a
+          Hosting Platform: <a href={EXTERNAL_LINKS.cloudflare} target="_blank"
+            >Cloudflare<IconArrow aria-hidden="true" /></a
           >
         </li>
       </ul>
@@ -40,17 +40,13 @@ import IconX from "@/svg/icon_x.svg";
       <Nav label="フッターナビゲーション" isHeader={false} />
       <ul class="social">
         <li>
-          <a
-            href="https://github.com/yskm-dev"
-            target="_blank"
-            aria-label="GitHub"
-          >
-            <IconGithub />
+          <a href={EXTERNAL_LINKS.x} target="_blank" aria-label="X">
+            <IconX />
           </a>
         </li>
         <li>
-          <a href="https://twitter.com/yskm_dev" target="_blank" aria-label="X">
-            <IconX />
+          <a href={EXTERNAL_LINKS.github} target="_blank" aria-label="GitHub">
+            <IconGithub />
           </a>
         </li>
       </ul>

@@ -3,8 +3,20 @@ import Drawer from "@/components/module/Drawer.astro";
 import Footer from "@/layouts/Footer.astro";
 import Header from "@/layouts/Header.astro";
 import "@/styles/globals.scss";
+import { getPageInfo, SITE_NAME } from "@/utils/sitemap";
 
-const { title = "Blog" } = Astro.props;
+const pathname = Astro.url.pathname;
+
+const pageInfo = getPageInfo(pathname);
+
+const { title: _title, description: _description } = Astro.props;
+const lang = "ja";
+const isHome = pageInfo?.isHome;
+const title = isHome
+  ? pageInfo?.title
+  : `${_title || pageInfo.title} | ${SITE_NAME}`;
+const description =
+  _description || pageInfo.description || "yskm_devのサイトです。";
 ---
 
 <html lang="ja">
@@ -14,6 +26,18 @@ const { title = "Blog" } = Astro.props;
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="og:locale" content="ja_JP" />
+    <meta name="og:type" content="website" />
+    <meta name="og:title" content={title} />
+    <meta name="og:description" content={description} />
+    <meta name="og:url" content={Astro.site + pathname} />
+    <meta name="og:site_name" content={SITE_NAME} />
+    <meta name="og:image" content={Astro.site + "/ogp.png"} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

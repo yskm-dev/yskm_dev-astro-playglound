@@ -29,7 +29,7 @@ export const getStaticPaths = async ({ paginate }: GetStaticPathsOptions) => {
 const { page } = Astro.props;
 ---
 
-<Layout title="Notes">
+<Layout title={`Notes - Page ${page.currentPage}`}>
   {/* page.currentPage = 現在のページ番号*/}
   <h1 class="title">Notes - Page {page.currentPage}</h1>
   <ul class="notesList">

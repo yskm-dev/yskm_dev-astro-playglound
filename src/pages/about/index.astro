@@ -1,20 +1,40 @@
 ---
+import { EXTERNAL_LINKS } from "@/const/links";
 import Layout from "@/layouts/Layout.astro";
+import Icon_Github from "@/svg/icon_github.svg";
+import Icon_X from "@/svg/icon_x.svg";
 ---
 
 <Layout title="About">
   <h1 class="h1">About</h1>
-  <p>
-    10年以上、フロントエンドエンジニアとしてWeb制作の現場に関わってきました。<br
-    />
-    主にHTML/CSS/JavaScriptを用いたコーディングや、演出面での実装を得意としています。<br
-    />
-  </p>
-  <p>
-    最近は、AstroやNext.jsなどのモダンなフレームワークや、Webアクセシビリティを主に勉強中です。<br
-    />
-    このサイトでは、個人的に学んだことや、技術的な知見をアウトプットしていく予定です。
-  </p>
+  <section>
+    <h2 class="h2">このサイトについて</h2>
+    <p>
+      主にフロントエンドの面で個人的に学んだことや、技術的な知見をアウトプットしていくためのサイトです。
+    </p>
+  </section>
+  <section>
+    <h2 class="h2">著者について</h2>
+    <h3 class="h3">yskm_dev</h3>
+    <ul class="social">
+      <li class="socialItem">
+        <Icon_X aria-label="X" />:
+        <a class="socialLink" href={EXTERNAL_LINKS.x} target="_blank"
+          >@_yskm_dev_</a
+        >
+      </li>
+      <li class="socialItem">
+        <Icon_Github aria-label="GitHub" />:
+        <a class="socialLink" href={EXTERNAL_LINKS.github} target="_blank"
+          >yskm-dev</a
+        >
+      </li>
+    </ul>
+    <p>
+      東京在住。<br />
+      10年以上、フロントエンドエンジニアとしてWeb制作の現場に関わってきました。 主にHTML/CSS/JavaScriptを用いたコーディングや、演出面での実装を得意としています。最近はAstroやNext.jsなどのモダンなフレームワークや、Webアクセシビリティを主に勉強中です。
+    </p>
+  </section>
 </Layout>
 
 <script></script>
@@ -28,6 +48,37 @@ import Layout from "@/layouts/Layout.astro";
     max-width: calc(rem(640) + var(--margin-l) * 2);
     padding: 0 var(--margin-l);
     margin: auto;
+  }
+
+  .social {
+    display: flex;
+    gap: var(--margin-m);
+    margin-bottom: var(--margin-m);
+  }
+
+  .socialItem {
+    display: flex;
+    gap: var(--margin-xxs);
+    align-items: center;
+
+    svg {
+      width: rem(16);
+      height: rem(16);
+      fill: var(--color-text);
+    }
+
+    a {
+      text-decoration: underline;
+      text-underline-offset: rem(4);
+    }
+  }
+
+  @media (hover: hover) {
+    .socialItem {
+      a:hover {
+        color: var(--color-primary);
+      }
+    }
   }
 
   .h1 {
@@ -46,7 +97,7 @@ import Layout from "@/layouts/Layout.astro";
 
   .h3 {
     margin-top: var(--margin-l);
-    margin-bottom: var(--margin-m);
+    margin-bottom: var(--margin-s);
     font-size: var(--font-size-heading-3);
     font-weight: 600;
     line-height: var(--line-height-heading-3);

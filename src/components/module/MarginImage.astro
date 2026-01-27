@@ -97,11 +97,9 @@ const HeadingTag = `h${headingLevel}` as const;
         text.textContent = sizeValue;
       }
 
-      document
-        .querySelector("[data-style-button]")
-        ?.addEventListener("themeChange", (event: any) => {
-          this.initialized();
-        });
+      document?.addEventListener("themeChange", (event: any) => {
+        this.initialized();
+      });
 
       // const mq = window.matchMedia("(max-width: 768px)");
       // mq.addEventListener("change", (e) => {
