@@ -13,16 +13,6 @@ import StyleButton from "@/layouts/StyleButton.astro";
       </p>
       <div class="header__links">
         <StyleButton />
-        <button
-          type="button"
-          class="close"
-          aria-label="メニューを閉じる"
-          aria-expanded="false"
-          aria-controls="drawer"
-        >
-          <span></span>
-          <span></span>
-        </button>
       </div>
     </div>
     <nav class="nav" aria-label="サイト内ナビゲーション">
@@ -89,27 +79,58 @@ import StyleButton from "@/layouts/StyleButton.astro";
         </a>
       </li>
     </ul>
+    <button
+      type="button"
+      class="close"
+      aria-label="メニューを閉じる"
+      aria-expanded="false"
+      aria-controls="drawer"
+      data-drawer-close
+    >
+      <span></span>
+      <span></span>
+    </button>
   </div>
 </app-drawer>
 
 <script>
+  const FOCUSABLE_ELEMENTS = [
+    "a[href]",
+    "area[href]",
+    'input:not([disabled]):not([type="hidden"]):not([aria-hidden])',
+    "select:not([disabled]):not([aria-hidden])",
+    "textarea:not([disabled]):not([aria-hidden])",
+    "button:not([disabled]):not([aria-hidden])",
+    "iframe",
+    "object",
+    "embed",
+    "[contenteditable]",
+    '[tabindex]:not([tabindex^="-"])',
+  ];
   export default class AppDrawer extends HTMLElement {
     private dialog: HTMLDialogElement | null = null;
     private close: HTMLButtonElement | null = null;
+    private wrapper: HTMLElement | null = null;
     private isOpen: boolean = false;
+    private focusableElements: HTMLElement[] | null = null;
+    private beforeFocusedElement: HTMLElement | null = null;
     constructor() {
       super();
     }
     initialize() {
       this.dialog = this.querySelector(".drawer") as HTMLDialogElement;
       this.close = this.querySelector(".close") as HTMLButtonElement;
+      this.wrapper = document.querySelector(".wrapper");
+      this.focusableElements = [
+        ...this.dialog!.querySelectorAll(FOCUSABLE_ELEMENTS.join(",")),
+      ] as HTMLElement[];
 
       this.close?.addEventListener("click", this.toggle.bind(this));
-      this.addEventListener("drawerOpen", () => {
-        console.log("drawerOpen event received");
-
-        this.toggle();
-      });
+      this.addEventListener("drawerOpen", this.toggle.bind(this));
+      this.dialog.addEventListener(
+        "keydown",
+        this.handleKeydownDrawerContainer.bind(this),
+      );
     }
     connectedCallback() {
       requestAnimationFrame(() => {
@@ -120,20 +141,69 @@ import StyleButton from "@/layouts/StyleButton.astro";
     toggle() {
       if (!this.dialog) return;
       if (this.isOpen) {
-        this.setAttribute("aria-hidden", "true");
-        this.isOpen = false;
-        document.body.style.overflow = ``;
-        document.body.style.touchAction = ``;
-        document.body.style.top = ``;
-        document.body.style.left = ``;
+        this.closeDrawer();
       } else {
-        this.setAttribute("aria-hidden", "false");
-        this.isOpen = true;
-        document.body.style.overflow = "hidden";
-        document.body.style.touchAction = "none";
-        document.body.style.top = `-${window.scrollY}px`;
-        document.body.style.left = "0";
+        this.openDrawer();
       }
+    }
+    openDrawer() {
+      this.beforeFocusedElement = document.activeElement as HTMLElement;
+      this.setAttribute("aria-hidden", "false");
+      this.wrapper?.setAttribute("aria-hidden", "true");
+      this.close?.setAttribute("aria-expanded", "true");
+      this.isOpen = true;
+      document.body.style.overflow = "hidden";
+      document.body.style.touchAction = "none";
+      document.body.style.top = `-${window.scrollY}px`;
+      document.body.style.left = "0";
+      this.focusableElements?.[0].focus();
+    }
+    closeDrawer() {
+      this.setAttribute("aria-hidden", "true");
+      this.wrapper?.setAttribute("aria-hidden", "false");
+      this.close?.setAttribute("aria-expanded", "false");
+      this.isOpen = false;
+      document.body.style.overflow = ``;
+      document.body.style.touchAction = ``;
+      document.body.style.top = ``;
+      document.body.style.left = ``;
+      this.beforeFocusedElement?.focus();
+      this.beforeFocusedElement = null;
+    }
+    /**
+     * フォーカストラップ回避のための処理
+     * Handle keydown event for drawer container
+     */
+    handleKeydownDrawerContainer() {
+      this.addEventListener("keydown", (event: KeyboardEvent) => {
+        if (event.key === "Escape" && this.isOpen) {
+          this.toggle();
+        }
+        if (event.code === "Tab") {
+          if (event.shiftKey) {
+            if (document.activeElement === this.focusableElements?.[0]) {
+              event.preventDefault();
+              this.focusableElements?.[
+                this.focusableElements!.length - 1
+              ].focus();
+            }
+          } else {
+            if (
+              document.activeElement ===
+              this.focusableElements?.[this.focusableElements!.length - 1]
+            ) {
+              event.preventDefault();
+              this.focusableElements?.[0].focus();
+              return;
+            }
+          }
+        }
+
+        if (event.key === "Tab") {
+          if (document.activeElement === this.focusableElements?.[0]) {
+          }
+        }
+      });
     }
   }
 
@@ -146,6 +216,7 @@ import StyleButton from "@/layouts/StyleButton.astro";
 
   .drawerWrapper {
     &[aria-hidden="true"] {
+      display: none;
       pointer-events: none;
       opacity: 0;
     }
@@ -158,8 +229,10 @@ import StyleButton from "@/layouts/StyleButton.astro";
     z-index: 20;
     width: 100%;
     height: 100%;
-    padding: var(--margin-m);
+    padding: 0 0 var(--margin-xl);
     margin: 0;
+    overflow: hidden;
+    overflow-y: scroll;
     background-color: var(--color-background);
     border: none;
 
@@ -172,16 +245,18 @@ import StyleButton from "@/layouts/StyleButton.astro";
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding: var(--margin-m);
   }
 
   .header__links {
     display: flex;
     gap: var(--margin-m);
     align-items: center;
+    padding-right: rem(52);
   }
 
   .nav {
-    padding: var(--margin-l);
+    padding: var(--margin-l) var(--margin-xl);
     margin-top: var(--margin-xl);
     font-size: var(--font-size-large);
     font-weight: 600;
@@ -198,11 +273,12 @@ import StyleButton from "@/layouts/StyleButton.astro";
   }
 
   .close {
-    position: relative;
+    position: absolute;
+    top: rem(16);
+    right: rem(12);
     display: block;
     width: rem(40);
     height: rem(40);
-    margin: rem(8) 0;
     background-color: var(--color-text);
     border-radius: rem(4);
 
@@ -227,7 +303,9 @@ import StyleButton from "@/layouts/StyleButton.astro";
   }
 
   .stack {
+    padding: 0 var(--margin-m);
     margin-top: var(--margin-xl);
+    margin-left: var(--margin-xs);
     font-size: var(--font-size-small);
     color: var(--color-text);
 
@@ -256,6 +334,7 @@ import StyleButton from "@/layouts/StyleButton.astro";
     display: flex;
     gap: var(--margin-s);
     width: fit-content;
+    padding: 0 var(--margin-m);
     margin-top: var(--margin-l);
     color: var(--color-text);
 

@@ -57,7 +57,12 @@ import StyleButton from "@/layouts/StyleButton.astro";
       });
 
       this.open?.addEventListener("click", () => {
-        const drawer = document.querySelector("app-drawer");
+        this.open?.setAttribute(
+          "aria-expanded",
+          this.open.getAttribute("aria-expanded") === "true" ? "false" : "true",
+        );
+        const drawer: HTMLElement | null = document.querySelector("app-drawer");
+
         if (drawer) {
           drawer.dispatchEvent(
             new CustomEvent("drawerOpen", {
@@ -164,7 +169,6 @@ import StyleButton from "@/layouts/StyleButton.astro";
       display: block;
       width: rem(40);
       height: rem(40);
-      margin: rem(8) 0;
       background-color: var(--color-secondary);
       border-radius: rem(4);
 

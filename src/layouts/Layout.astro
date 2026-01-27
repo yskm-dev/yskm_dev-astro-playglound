@@ -22,14 +22,16 @@ const { title = "Blog" } = Astro.props;
     />
   </head>
   <body>
-    <Header />
-    <main>
-      <div class="container">
-        <slot />
-      </div>
-      <Drawer />
-    </main>
-    <Footer />
+    <div class="wrapper">
+      <Header />
+      <main>
+        <div class="container">
+          <slot />
+        </div>
+      </main>
+      <Footer />
+    </div>
+    <Drawer />
   </body>
 </html>
 

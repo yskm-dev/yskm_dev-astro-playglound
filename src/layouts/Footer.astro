@@ -7,7 +7,7 @@ import IconX from "@/svg/icon_x.svg";
 
 <footer class="footer">
   <div class="footer__inner">
-    <aside class="stack">
+    <div class="stack">
       <h2 class="stack__title">Built with:</h2>
       <ul>
         <li>
@@ -35,7 +35,7 @@ import IconX from "@/svg/icon_x.svg";
           >
         </li>
       </ul>
-    </aside>
+    </div>
     <div class="links">
       <Nav label="フッターナビゲーション" isHeader={false} />
       <ul class="social">
@@ -86,7 +86,6 @@ import IconX from "@/svg/icon_x.svg";
     font-size: var(--font-size-small);
     @include mq-lt("md") {
       display: block;
-      order: 1;
       width: fit-content;
       margin-top: var(--margin-xl);
     }
@@ -146,7 +145,7 @@ import IconX from "@/svg/icon_x.svg";
 
     @include mq-lt("md") {
       align-items: flex-start;
-      margin: auto;
+      margin: var(--margin-l) auto 0;
     }
   }
 
