@@ -1,0 +1,234 @@
+---
+import MarginImage from "@/components/module/MarginImage.astro";
+import Pallet from "@/components/module/Pallet.astro";
+import Layout from "@/layouts/Layout.astro";
+import IconArrow from "@/svg/icon_arrow.svg";
+---
+
+<Layout title="Rules">
+  <h1 class="h1">Rules</h1>
+  <p class="description">
+    このページでは、当サイトで使用しているデザインルールをまとめています。
+  </p>
+  <section class="section">
+    <h2 class="h2 border-bottom">フォントファミリー</h2>
+    <p class="p">
+      英語: <a
+        class="link"
+        href="https://fonts.google.com/specimen/Inter+Tight"
+        target="_blank"
+        >Inter
+        <IconArrow /></a
+      ><br />日本語: ヒラギノ角ゴ
+    </p>
+  </section>
+  <section class="section">
+    <h2 class="h2 border-bottom">フォントスタイル</h2>
+    <p class="h1">見出し1（h1）</p>
+    <p class="h2 border-bottom">見出し2（h2）</p>
+    <p class="h3">見出し3（h3）</p>
+    <p class="h4">見出し4（h4）</p>
+    <p class="h3">段落 大（p-large）</p>
+    <p class="p-large">
+      吾輩は猫である。名前はまだ無い。どこで生れたかとんと見当がつか
+      ぬ。何でも薄暗いじめじめした所でニャーニャー泣いていた事だけは記憶
+      している。吾輩はここで始めて人間というものを見た。しかもあとで聞くと
+      それは書生という人間中で一番獰悪な種族であったそうだ。この書生とい
+      うのは時々我々を捕えて煮て食うという話である。しかしその当時は何という
+      考もなかったから別段恐しいとも思わなかった。ただ彼の掌に載せられてスー
+      と持ち上げられた時何となく嬉しかったばかりである。
+    </p>
+    <p class="h3">段落 基本サイズ（p）</p>
+    <p class="p">
+      吾輩は猫である。名前はまだ無い。どこで生れたかとんと見当がつか
+      ぬ。何でも薄暗いじめじめした所でニャーニャー泣いていた事だけは記憶
+      している。吾輩はここで始めて人間というものを見た。しかもあとで聞くと
+      それは書生という人間中で一番獰悪な種族であったそうだ。この書生とい
+      うのは時々我々を捕えて煮て食うという話である。しかしその当時は何という
+      考もなかったから別段恐しいとも思わなかった。ただ彼の掌に載せられてスー
+      と持ち上げられた時何となく嬉しかったばかりである。
+    </p>
+
+    <div>
+      <p class="h3">段落 小（p-small）</p>
+      <p class="p-small">
+        吾輩は猫である。名前はまだ無い。どこで生れたかとんと見当がつか
+        ぬ。何でも薄暗いじめじめした所でニャーニャー泣いていた事だけは記憶
+        している。吾輩はここで始めて人間というものを見た。しかもあとで聞くと
+        それは書生という人間中で一番獰悪な種族であったそうだ。この書生とい
+        うのは時々我々を捕えて煮て食うという話である。しかしその当時は何という
+        考もなかったから別段恐しいとも思わなかった。ただ彼の掌に載せられてスー
+        と持ち上げられた時何となく嬉しかったばかりである。
+      </p>
+    </div>
+  </section>
+  <section class="section">
+    <h2 class="h2 border-bottom">マージンサイズ</h2>
+    <MarginImage size="xxl" label="XXLサイズの幅" headingLevel={3} />
+    <MarginImage size="xl" label="XLサイズの幅" headingLevel={3} />
+    <MarginImage size="l" label="Lサイズの幅" headingLevel={3} />
+    <MarginImage size="m" label="Mサイズの幅" headingLevel={3} />
+    <MarginImage size="s" label="Sサイズの幅" headingLevel={3} />
+    <MarginImage size="xs" label="XSサイズの幅" headingLevel={3} />
+    <MarginImage size="xxs" label="XXSサイズの幅" headingLevel={3} />
+  </section>
+  <section class="section">
+    <h2 class="h2 border-bottom">カラー</h2>
+    <ul class="palletList">
+      <li>
+        <Pallet color="background" />
+      </li>
+      <li>
+        <Pallet color="text" />
+      </li>
+      <li>
+        <Pallet color="border" />
+      </li>
+      <li>
+        <Pallet color="primary" />
+      </li>
+      <li>
+        <Pallet color="secondary" />
+      </li>
+    </ul>
+  </section>
+</Layout>
+
+<script></script>
+
+<style lang="scss">
+  @use "@/styles/variables" as var;
+  @use "@/styles/extension" as *;
+
+  .main {
+    width: 100%;
+    max-width: calc(rem(640) + var(--margin-l) * 2);
+    padding: 0 var(--margin-l);
+    margin: auto;
+  }
+
+  .link {
+    display: inline-flex;
+    gap: 0.1em;
+    align-items: center;
+    text-decoration: underline;
+
+    svg {
+      width: 1em;
+      height: 1em;
+    }
+  }
+
+  @media (hover: hover) {
+    .link:hover {
+      color: var(--color-primary);
+      text-decoration: none;
+    }
+  }
+
+  .description {
+    margin-bottom: var(--margin-xl);
+  }
+
+  .section {
+    margin-bottom: var(--margin-xxl);
+  }
+
+  .h1 {
+    margin-block: var(--margin-l);
+    font-size: var(--font-size-heading-1);
+    font-weight: 600;
+    line-height: var(--line-height-heading-1);
+  }
+
+  .h2 {
+    margin-block: var(--margin-l);
+    font-size: var(--font-size-heading-2);
+    font-weight: 600;
+    line-height: var(--line-height-heading-2);
+  }
+
+  .h3 {
+    margin-top: var(--margin-l);
+    margin-bottom: var(--margin-m);
+    font-size: var(--font-size-heading-3);
+    font-weight: 600;
+    line-height: var(--line-height-heading-3);
+  }
+
+  .h4 {
+    margin-block: var(--margin-m);
+    font-size: var(--font-size-heading-4);
+    font-weight: 600;
+    line-height: var(--line-height-heading-4);
+  }
+
+  .p-base {
+    margin-block: var(--margin-s);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
+  }
+
+  .p-large {
+    margin-block: var(--margin-s);
+    font-size: var(--font-size-large);
+    line-height: var(--line-height-base);
+  }
+
+  .p-small {
+    margin-block: var(--margin-s);
+    font-size: var(--font-size-small);
+    line-height: var(--line-height-base);
+  }
+
+  .border-bottom {
+    padding-bottom: var(--margin-xs);
+    border-bottom: rem(1) solid var(--color-border);
+  }
+
+  .box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: var(--margin-l);
+    font-weight: 600;
+    color: var(--color-background);
+    background-color: var(--color-text);
+
+    &[data-size="xxl"] {
+      height: var(--margin-xxl);
+      font-weight: 600;
+    }
+
+    &[data-size="xl"] {
+      height: var(--margin-xl);
+    }
+
+    &[data-size="l"] {
+      height: var(--margin-l);
+    }
+
+    &[data-size="m"] {
+      height: var(--margin-m);
+    }
+
+    &[data-size="s"] {
+      height: var(--margin-s);
+    }
+
+    &[data-size="xs"] {
+      height: var(--margin-xs);
+    }
+
+    &[data-size="xxs"] {
+      height: var(--margin-xxs);
+    }
+  }
+
+  .palletList {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(rem(120), 1fr));
+    gap: var(--margin-l);
+  }
+</style>

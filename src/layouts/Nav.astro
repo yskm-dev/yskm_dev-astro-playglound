@@ -1,0 +1,119 @@
+---
+const { label, isHeader = true, className = "" } = Astro.props;
+---
+
+<app-nav class={className}>
+  <nav class="nav" aria-label={label}>
+    <ul class="navList">
+      {
+        isHeader ? null : (
+          <li>
+            <a href="/" aria-label="Home">
+              <span aria-hidden="true">Home</span>
+            </a>
+          </li>
+        )
+      }
+      <li>
+        <a href="/profile" aria-label="Profile">
+          <span aria-hidden="true">Profile</span>
+        </a>
+      </li>
+      <li>
+        <a href="/notes" aria-label="Notes">
+          <span aria-hidden="true">Notes</span>
+        </a>
+      </li>
+      <li>
+        <a href="/rules" aria-label="Rules">
+          <span aria-hidden="true">Rules</span>
+        </a>
+      </li>
+      <li>
+        <a href="/sketch" aria-label="Sketch">
+          <span aria-hidden="true">Sketch</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</app-nav>
+
+<script>
+  import gsap from "gsap";
+  import { ScrambleTextPlugin } from "gsap/ScrambleTextPlugin";
+  gsap.registerPlugin(ScrambleTextPlugin);
+
+  class AppNav extends HTMLElement {
+    private links: NodeListOf<HTMLAnchorElement> = null!;
+    constructor() {
+      super();
+    }
+
+    connectedCallback() {
+      this.links = this.querySelectorAll("a");
+
+      this.links.forEach((link) => {
+        link.addEventListener("mouseenter", (e: Event) => {
+          const target = e.currentTarget as HTMLElement;
+          const span = target.querySelector("span");
+          const text = span?.textContent;
+          if (!text || !span) return;
+
+          const func = this.createAnimateFunction(span, text);
+
+          gsap.ticker.fps(10);
+          gsap.ticker.add(func);
+
+          target.classList.add("animating");
+          setTimeout(() => {
+            gsap.ticker.remove(func);
+            span.textContent = target.getAttribute("aria-label") || text;
+            target.classList.remove("animating");
+          }, 350);
+        });
+      });
+    }
+
+    createAnimateFunction(target: HTMLElement, text: string) {
+      return () => {
+        const chars = text.split("");
+        // Fisher-Yatesシャッフル
+        for (let i = chars.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [chars[i], chars[j]] = [chars[j], chars[i]];
+        }
+        target.textContent = chars.join("");
+      };
+    }
+  }
+
+  customElements.define("app-nav", AppNav);
+</script>
+
+<style lang="scss">
+  @use "@/styles/variables" as var;
+  @use "@/styles/extension" as *;
+
+  .navList {
+    display: flex;
+    gap: var(--margin-m);
+    padding: 0;
+    margin: 0;
+    font-size: var(--font-size-heading-5);
+    font-weight: 400;
+    list-style: none;
+
+    @media (hover: hover) {
+      a:hover {
+        color: var(--color-primary);
+        text-decoration: none;
+      }
+    }
+  }
+
+  @include mq-lt("sm") {
+    .nav {
+      display: none;
+    }
+  }
+</style>

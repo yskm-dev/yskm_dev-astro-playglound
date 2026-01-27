@@ -1,0 +1,101 @@
+---
+export interface Props {
+  color: "background" | "text" | "border" | "primary" | "secondary";
+}
+
+const { color } = Astro.props as Props;
+---
+
+<app-pallet class="pallet" data-color={color}>
+  <p class="colorName">{color}</p>
+  <p class="colorCode"></p>
+</app-pallet>
+
+<style lang="scss">
+  @use "@/styles/variables" as var;
+  @use "@/styles/extension" as *;
+
+  .pallet {
+    position: relative;
+    display: block;
+    width: 100%;
+    max-width: rem(120);
+    height: rem(120);
+    padding: var(--margin-s) var(--margin-s);
+    font-weight: 600;
+
+    &[data-color="background"] {
+      background-color: var(--color-background);
+      border: 1px solid var(--color-text);
+    }
+
+    &[data-color="text"] {
+      color: var(--color-background);
+      background-color: var(--color-text);
+    }
+
+    &[data-color="border"] {
+      background-color: var(--color-border);
+    }
+
+    &[data-color="primary"] {
+      background-color: var(--color-primary);
+    }
+
+    &[data-color="secondary"] {
+      color: var(--color-background);
+      background-color: var(--color-secondary);
+    }
+  }
+
+  .colorName {
+    position: absolute;
+    top: var(--margin-s);
+    left: var(--margin-s);
+    font-size: var(--font-size-small);
+  }
+
+  .colorCode {
+    position: absolute;
+    right: var(--margin-s);
+    bottom: var(--margin-s);
+    font-size: var(--font-size-small);
+  }
+</style>
+
+<script>
+  // No additional script needed for this component
+  class AppPallet extends HTMLElement {
+    private rafId: number | null = null;
+    constructor() {
+      super();
+    }
+    connectedCallback() {
+      this.rafId = requestAnimationFrame(() => {
+        this.initialized();
+      });
+    }
+    disconnectedCallback() {
+      if (this.rafId !== null) {
+        cancelAnimationFrame(this.rafId);
+      }
+    }
+    initialized() {
+      const color = this.getAttribute("data-color");
+      const colorCode = getComputedStyle(
+        document.documentElement,
+      ).getPropertyValue(`--color-${color}`);
+      const text = this.querySelector(".colorCode");
+      if (text) {
+        text.textContent = colorCode.trim();
+      }
+
+      document
+        .querySelector("[data-style-button]")
+        ?.addEventListener("themeChange", (event: any) => {
+          this.initialized();
+        });
+    }
+  }
+  customElements.define("app-pallet", AppPallet);
+</script>

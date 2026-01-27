@@ -1,0 +1,183 @@
+---
+import Nav from "@/layouts/Nav.astro";
+import IconArrow from "@/svg/icon_arrow.svg";
+import IconGithub from "@/svg/icon_github.svg";
+import IconX from "@/svg/icon_x.svg";
+---
+
+<footer class="footer">
+  <div class="footer__inner">
+    <div class="stack">
+      <h2 class="stack__title">Built with:</h2>
+      <ul>
+        <li>
+          Framework: <a href="https://astro.build/" target="_blank"
+            >Astro<IconArrow aria-hidden="true" /></a
+          >
+        </li>
+        <li>
+          Programming Language: <a
+            href="https://www.typescriptlang.org/"
+            target="_blank"
+            >TypeScript
+            <IconArrow aria-hidden="true" /></a
+          >
+        </li>
+        <li>
+          CMS: <a href="https://microcms.io/" target="_blank"
+            >MicroCMS<IconArrow aria-hidden="true" /></a
+          >
+        </li>
+        <li>
+          Hosting Platform: <a
+            href="https://pages.cloudflare.com/"
+            target="_blank">Cloudflare<IconArrow aria-hidden="true" /></a
+          >
+        </li>
+      </ul>
+    </div>
+    <div class="links">
+      <Nav label="フッターナビゲーション" isHeader={false} />
+      <ul class="social">
+        <li>
+          <a
+            href="https://github.com/yskm-dev"
+            target="_blank"
+            aria-label="GitHub"
+          >
+            <IconGithub />
+          </a>
+        </li>
+        <li>
+          <a href="https://twitter.com/yskm_dev" target="_blank" aria-label="X">
+            <IconX />
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <p class="copyright">© 2026 yskm_dev</p>
+</footer>
+
+<style lang="scss">
+  @use "@/styles/variables" as var;
+  @use "@/styles/extension" as *;
+
+  .footer {
+    width: 100%;
+    padding: var(--margin-m) var(--margin-m) var(--margin-l);
+    margin-top: var(--margin-xxl);
+  }
+
+  .footer__inner {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    justify-content: space-between;
+    @include mq-lt("md") {
+      grid-template-columns: 1fr;
+      width: fit-content;
+      margin: auto;
+    }
+  }
+
+  .stack {
+    display: flex;
+    gap: var(--margin-s);
+    font-size: var(--font-size-small);
+    @include mq-lt("md") {
+      display: block;
+      width: fit-content;
+      margin-top: var(--margin-xl);
+    }
+
+    ul {
+      flex: 0 0 auto;
+    }
+
+    svg {
+      position: relative;
+      width: rem(12);
+      height: rem(12);
+      margin-left: var(--margin-xxs);
+    }
+
+    a {
+      display: inline-flex;
+      gap: rem(--margin-s);
+      align-items: center;
+      text-decoration: underline;
+    }
+  }
+
+  .stack__title {
+    flex: 0 1 auto;
+    @include mq-lt("md") {
+      flex: 0 0 auto;
+    }
+  }
+
+  .social {
+    display: flex;
+    gap: var(--margin-s);
+    color: var(--color-text);
+    @include mq-lt("md") {
+      width: fit-content;
+      margin-top: var(--margin-m);
+    }
+
+    a {
+      display: flex;
+      gap: var(--margin-4);
+      align-items: center;
+      justify-content: space-between;
+      width: rem(24);
+      height: rem(24);
+    }
+  }
+
+  .links {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: space-between;
+    width: fit-content;
+    height: 100%;
+
+    @include mq-lt("md") {
+      align-items: flex-start;
+      margin: var(--margin-l) auto 0;
+    }
+  }
+
+  @media (hover: hover) {
+    .stack a:hover {
+      color: var(--color-primary);
+      text-decoration: none;
+    }
+  }
+
+  .navList {
+    display: flex;
+    gap: var(--margin-m);
+    font-size: var(--font-size-medium);
+
+    a {
+      text-decoration: underline;
+    }
+  }
+
+  @media (hover: hover) {
+    .navList a:hover,
+    .social a:hover {
+      color: var(--color-primary);
+      text-decoration: none;
+    }
+  }
+
+  .copyright {
+    margin-top: var(--margin-xl);
+    font-size: var(--font-size-small);
+    color: var(--color-secondary);
+    text-align: center;
+  }
+</style>
