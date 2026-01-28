@@ -26,7 +26,7 @@ const hasStartPageLink = startPage > 1;
 const hasEndPageLink = endPage < lastPage;
 ---
 
-<app-pagination aria-label="ページネーション">
+<app-pagination>
   <nav class="pagination" aria-label="ページネーション">
     {/* 前へを表示 */}
     <div class:list={["prev", { invalid: !urlPrev }]} aria-hidden={!urlPrev}>
@@ -52,25 +52,15 @@ const hasEndPageLink = endPage < lastPage;
       }
       {/* ページ番号のリンクを表示 */}
       {
-        (() => {
-          return [...Array(lastPage)].map((_, index) => {
-            if (index + 1 >= startPage && index < endPage) {
-              if( index + 1 === currentPage) {
-                return (
-                  <li class:list={["page", { current: true }]} aria-current="page">
-                    <span> {index + 1} </span>
-                  </li>
-                );
-              }
-              return (
-                <li class="page">
-                  <a href={`/notes/page/${index + 1}/`}> {index + 1} </a>
-                </li>
-              );
-            }
-            return null;
-          });
-        })()
+        Array.from({ length: lastPage }, (_, index) => index + 1).map((pageCount) => pageCount === currentPage ? (
+          <li class:list={["page", { current: true }]} aria-current="page">
+            <span> {pageCount} </span>
+          </li>
+        ) : (
+          <li class="page">
+            <a href={`/notes/page/${pageCount}/`}> {pageCount} </a>
+          </li>
+        ))
       }
       {
         hasEndPageLink ? (
