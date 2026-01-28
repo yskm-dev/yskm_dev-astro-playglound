@@ -13,6 +13,7 @@ export type Tags = {
   name: string;
   slug: string;
 } & MicroCMSListContent;
+``;
 
 export type Notes = {
   icon: string;
