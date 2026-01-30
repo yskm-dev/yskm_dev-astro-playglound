@@ -33,6 +33,7 @@ class ThemeManager {
     const theme =
       savedTheme === "dark" || savedTheme === "light" ? savedTheme : "system";
     document.documentElement.setAttribute("data-theme", theme);
+    this.currentTheme = theme;
   }
 
   // メディアクエリの変更を処理するメソッド
