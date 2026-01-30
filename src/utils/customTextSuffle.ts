@@ -12,7 +12,7 @@ function createAnimateFunction(target: HTMLElement, text: string) {
   };
 }
 
-export function customTextShuffle(span: HTMLElement, text: string): string {
+export function customTextShuffle(span: HTMLElement, text: string): void {
   const func = createAnimateFunction(span, text);
 
   gsap.ticker.fps(15);
