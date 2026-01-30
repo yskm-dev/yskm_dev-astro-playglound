@@ -152,10 +152,22 @@ import StyleButton from "@/layouts/StyleButton.astro";
       this.wrapper?.setAttribute("aria-hidden", "true");
       this.close?.setAttribute("aria-expanded", "true");
       this.isOpen = true;
+
+      const _scrollbarWidth = window.innerWidth - document.body.clientWidth;
+
       document.body.style.overflow = "hidden";
       document.body.style.touchAction = "none";
       document.body.style.top = `-${window.scrollY}px`;
       document.body.style.left = "0";
+
+      document.documentElement.style.setProperty(
+        "--scrollbar-width",
+        `${_scrollbarWidth}px`,
+      );
+      if (_scrollbarWidth > 0) {
+        this.dialog?.style.setProperty("scrollbar-gutter", `stable`);
+      }
+
       this.focusableElements?.[0].focus();
     }
     closeDrawer() {
@@ -167,6 +179,10 @@ import StyleButton from "@/layouts/StyleButton.astro";
       document.body.style.touchAction = ``;
       document.body.style.top = ``;
       document.body.style.left = ``;
+
+      document.documentElement.style.setProperty("--scrollbar-width", `0px`);
+      this.dialog?.style.setProperty("scrollbar-gutter", `auto`);
+
       this.beforeFocusedElement?.focus();
       this.beforeFocusedElement = null;
     }
@@ -232,7 +248,7 @@ import StyleButton from "@/layouts/StyleButton.astro";
     padding: 0 0 var(--margin-xl);
     margin: 0;
     overflow: hidden;
-    overflow-y: scroll;
+    overflow-y: auto;
     background-color: var(--color-background);
     border: none;
 
