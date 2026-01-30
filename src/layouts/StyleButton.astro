@@ -4,9 +4,9 @@
 
 <app-style-button>
   <button
-    class="style-button"
+    class="styleButton"
     aria-label="見た目を切り替える"
-    data-state="light"
+    data-theme=""
     data-style-button
   >
     <span class="switch light">
@@ -19,12 +19,15 @@
 </app-style-button>
 
 <script>
+  import ThemeManager from "@/utils/ThemeManager";
   class AppStyleButton extends HTMLElement {
     private button: HTMLButtonElement | null = null;
-    private currentMode: "light" | "dark" = "light";
+    private currentTheme: "system" | "light" | "dark" = "system";
     private rafId: number | null = null;
+
     constructor() {
       super();
+      this.button = this.querySelector("[data-style-button]");
     }
 
     connectedCallback() {
@@ -34,50 +37,25 @@
     }
 
     initialized() {
-      this.button = this.querySelector(".style-button");
-
-      if (localStorage.getItem("theme")) {
-        this.currentMode = localStorage.getItem("theme") as "light" | "dark";
-        this.button?.setAttribute("data-state", this.currentMode);
-      } else {
-        const darkModeMediaQuery = window.matchMedia(
-          "(prefers-color-scheme: dark)",
-        );
-        const isDarkMode = darkModeMediaQuery.matches;
-        if (isDarkMode) {
-          this.currentMode = "dark";
-        } else {
-          this.currentMode = "light";
-        }
-      }
-
-      this.update();
+      this.currentTheme = ThemeManager.getTheme;
 
       this.button?.addEventListener("click", this.toggleStyle.bind(this));
-
-      // 他のStyleButtonインスタンスからのtheme変更をリッスン
-      document.addEventListener("themeChange", ((e: CustomEvent) => {
-        if (e.detail.source !== this) {
-          this.currentMode = e.detail.theme;
-          this.button?.setAttribute("data-state", this.currentMode);
-        }
-      }) as EventListener);
     }
 
     update() {
       if (this.button === null) return;
-      localStorage.setItem("theme", this.currentMode);
-      this.button.setAttribute("data-state", this.currentMode);
-      if (this.currentMode === "dark") {
-        document.documentElement.setAttribute("data-theme", "dark");
-      } else {
-        document.documentElement.setAttribute("data-theme", "light");
-      }
+      this.button.dataset.theme = this.currentTheme;
+      requestAnimationFrame(() => {
+        this.button?.classList.add("animating");
 
+        setTimeout(() => {
+          this.button?.classList.remove("animating");
+        }, 300);
+      });
       // document全体にイベントをdispatchして他のStyleButtonインスタンスと同期
       document.dispatchEvent(
         new CustomEvent("themeChange", {
-          detail: { theme: this.currentMode, source: this },
+          detail: { theme: this.currentTheme, source: this },
           bubbles: true,
         }),
       );
@@ -85,13 +63,25 @@
 
     toggleStyle() {
       if (this.button === null) return;
-      this.button?.classList.remove("animating");
+      const theme = document.documentElement.getAttribute("data-theme");
+      let newTheme: "light" | "dark";
+      switch (theme) {
+        case "light":
+          newTheme = "dark";
+          break;
+        case "dark":
+          newTheme = "light";
+          break;
+        default:
+          newTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
+            ? "light"
+            : "dark";
+          break;
+      }
+      this.currentTheme = newTheme;
+      ThemeManager.updateTheme(newTheme);
 
-      this.currentMode = this.currentMode === "light" ? "dark" : "light";
       this.update();
-      requestAnimationFrame(() => {
-        this.button?.classList.add("animating");
-      });
     }
   }
 
@@ -122,7 +112,7 @@
     }
   }
 
-  .style-button {
+  .styleButton {
     position: relative;
     display: flex;
     gap: rem(var(--margin-xs));
@@ -137,8 +127,11 @@
     border: none;
     border: rem(1) solid var(--color-border);
     border-radius: 50%;
+  }
 
-    &[data-state="light"] {
+  :global(html[data-theme="system"]),
+  :global(html[data-theme="light"]) {
+    .styleButton {
       .light {
         transform: rotate(0deg);
       }
@@ -147,36 +140,42 @@
         transform: rotate(90deg);
       }
     }
+  }
+  @media (prefers-color-scheme: dark) {
+    :global(html[data-theme="system"]),
+    :global(html[data-theme="dark"]) {
+      .styleButton {
+        .light {
+          transform: rotate(90deg);
+        }
 
-    &[data-state="dark"] {
-      .light {
-        transform: rotate(90deg);
-      }
-
-      .dark {
-        transform: rotate(0deg);
+        .dark {
+          transform: rotate(0deg);
+        }
       }
     }
+  }
 
+  .styleButton[data-theme="light"] {
     &.animating {
-      &[data-state="light"] {
-        .light {
-          animation: rotateIn 0.3s var.$ease-in-out-quart;
-        }
-
-        .dark {
-          animation: rotateOut 0.3s var.$ease-in-out-quart;
-        }
+      .light {
+        animation: rotateIn 0.3s var.$ease-in-out-quart;
       }
 
-      &[data-state="dark"] {
-        .light {
-          animation: rotateOut 0.3s var.$ease-in-out-quart;
-        }
+      .dark {
+        animation: rotateOut 0.3s var.$ease-in-out-quart;
+      }
+    }
+  }
 
-        .dark {
-          animation: rotateIn 0.3s var.$ease-in-out-quart;
-        }
+  .styleButton[data-theme="dark"] {
+    &.animating {
+      .light {
+        animation: rotateOut 0.3s var.$ease-in-out-quart;
+      }
+
+      .dark {
+        animation: rotateIn 0.3s var.$ease-in-out-quart;
       }
     }
   }
