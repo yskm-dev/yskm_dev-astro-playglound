@@ -7,12 +7,16 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "lint:ts": "eslint src --ext .ts,.tsx,.astro",
+    "lint:ts": "eslint 'src/**/*.{ts,tsx}'",
+    "lint:astro": "eslint 'src/**/*.astro'",
     "lint:prettier": "prettier --check './src/**/*.{astro,js,jsx,ts,tsx,css,scss}'",
     "lint:style": "stylelint 'src/**/*.{css,scss,astro}'",
-    "fix:ts": "eslint src --ext .ts,.tsx,.astro --fix",
+    "fix:ts": "eslint 'src/**/*.{ts,tsx}' --fix",
+    "fix:astro": "eslint 'src/**/*.astro' --fix",
     "fix:prettier": "prettier './src/**/*.{astro,js,jsx,ts,tsx,css,scss}' --write .",
-    "fix:style": "stylelint 'src/**/*.{css,scss,astro}' --fix"
+    "fix:style": "stylelint 'src/**/*.{css,scss,astro}' --fix",
+    "fix": "npm run fix:ts && npm run fix:prettier && npm run fix:style",
+    "lint": "npm run lint:ts && npm run lint:prettier && npm run lint:style"
   },
   "overrides": {
     "react": "npm:@preact/compat@latest",
@@ -29,6 +33,7 @@
   "devDependencies": {
     "@markuplint/astro-parser": "^4.6.22",
     "@typescript-eslint/parser": "^8.53.1",
+    "astro-eslint-parser": "^1.2.2",
     "eslint": "^9.39.2",
     "eslint-plugin-astro": "^1.5.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",

@@ -1,21 +1,14 @@
 ---
-import type { Notes } from "@/libs/microcms";
 import IconNext from "@/svg/icon_next.svg";
 import IconPrev from "@/svg/icon_prev.svg";
-import type { MicroCMSContentId, MicroCMSDate } from "microcms-js-sdk";
 
 interface Props {
-  data: (Pick<Notes, "title"> & {
-    title: string;
-  } & MicroCMSContentId &
-    MicroCMSDate)[];
   currentPage: number;
   lastPage: number;
   urlPrev: string | null | undefined;
   urlNext: string | null | undefined;
 }
-const { data, currentPage, lastPage, urlPrev, urlNext } = Astro.props;
-
+const { currentPage, lastPage, urlPrev, urlNext } = Astro.props;
 
 // ページネーションの表示設定
 const MAX_PAGE_LINKS = 3;
@@ -25,75 +18,85 @@ const endPage = Math.min(lastPage, startPage + MAX_PAGE_LINKS - 1);
 // 前後に省略記号を表示するかどうかを判定
 const hasStartPageLink = startPage > 1;
 const hasEndPageLink = endPage < lastPage;
-
-
 ---
 
 <app-pagination>
   <nav class="pagination" aria-label="ページネーション">
     {/* 前へを表示 */}
     <div class:list={["prev", { invalid: !urlPrev }]} aria-hidden={!urlPrev}>
-      {() => {
-        if(urlPrev) {
-          return (
-            <a href={urlPrev === "/notes/page/1" ? "/notes" : urlPrev} aria-label="前のページへ"> <IconPrev /> </a>
-          )
-        }
-      }}
+      {
+        urlPrev && (
+          <>
+            <a
+              href={urlPrev === "/notes/page/1" ? "/notes" : urlPrev}
+              aria-label="前のページへ"
+            >
+              {" "}
+              <IconPrev />{" "}
+            </a>
+          </>
+        )
+      }
     </div>
     <ul class="countList">
       {/* 先頭のページリンクを表示 */}
       {
         hasStartPageLink ? (
-        <li class="page">
-          <a href={`/notes`}> 1 </a>
-        </li>
-        <li class="omission">
-          ...
-        </li>
+          <>
+            <li class="page">
+              <a href={`/notes`}> 1 </a>
+            </li>
+            <li class="omission">...</li>
+          </>
         ) : null
       }
       {/* ページ番号のリンクを表示 */}
-      {Array.from(
-        { length: endPage - startPage + 1 },
-        (_, i) => startPage + i
-      ).map((pageCount) => {
-        return pageCount !== currentPage ? (
-          <li class="page">
-            <a href={pageCount === 1 ? `/notes/` : `/notes/page/${pageCount}/`}>
-              {pageCount}
-            </a>
-          </li>
-        ) : (
-          <li class="page">
-            <span class="current" aria-current="page">{pageCount}</span>
-          </li>
-        )})
+      {
+        Array.from(
+          { length: endPage - startPage + 1 },
+          (_, i) => startPage + i,
+        ).map((pageCount) => {
+          return pageCount !== currentPage ? (
+            <li class="page">
+              <a
+                href={pageCount === 1 ? `/notes/` : `/notes/page/${pageCount}/`}
+              >
+                {pageCount}
+              </a>
+            </li>
+          ) : (
+            <li class="page">
+              <span class="current" aria-current="page">
+                {pageCount}
+              </span>
+            </li>
+          );
+        })
       }
       {
         hasEndPageLink ? (
-          <li class="omission">
-            ...
-          </li>
-          <li class="page">
-            <a href={`/notes/page/${lastPage}/`}>{lastPage}</a>
-          </li>
+          <>
+            <li class="omission">...</li>
+            <li class="page">
+              <a href={`/notes/page/${lastPage}/`}>{lastPage}</a>
+            </li>
+          </>
         ) : null
       }
     </ul>
     {/* 次へを表示 */}
     <div class:list={["next", { invalid: !urlNext }]} aria-hidden={!urlNext}>
-      {() => {
-        if(urlNext) {
-          return (
-          <a href={urlNext} aria-label="次のページへ"> <IconNext /> </a>
-          )
-        }
-      }}
+      {
+        urlNext && (
+          <a href={urlNext} aria-label="次のページへ">
+            {" "}
+            <IconNext />{" "}
+          </a>
+        )
+      }
     </div>
   </nav>
 </app-pagination>
-
 
 <style lang="scss">
   @use "@/styles/variables" as var;
@@ -148,7 +151,7 @@ const hasEndPageLink = endPage < lastPage;
     }
   }
 
-  .ommission {
+  .omission {
     display: flex;
     align-items: center;
     justify-content: center;

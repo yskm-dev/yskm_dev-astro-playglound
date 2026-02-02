@@ -12,7 +12,8 @@
     "function-url-quotes": "always",
     "selector-class-pattern": null,
     "scss/at-mixin-pattern": null,
-    "custom-property-pattern": "^_?([a-z][a-z0-9]*)(-[a-z0-9]+)*$",
+    "custom-property-pattern": "^_?([a-z0-9][a-z0-9]*)(-[a-z0-9]+)*$",
+    "keyframes-name-pattern": null,
     "block-no-empty": [true, { "ignore": ["comments"] }],
     "selector-pseudo-class-no-unknown": [
       true,

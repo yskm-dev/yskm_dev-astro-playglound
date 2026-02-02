@@ -1,13 +1,13 @@
-@use 'sass:map';
-@use 'sass:meta';
-@use '../variables' as var;
-@use 'functions' as *;
+@use "sass:map";
+@use "sass:meta";
+@use "../variables" as var;
+@use "functions" as *;
 
 $break-points: (
-  'sm': var.$mq-sm,
-  'md': var.$mq-md,
-  'lg': var.$mq-lg,
-  'xl': var.$mq-xl,
+  "sm": var.$mq-sm,
+  "md": var.$mq-md,
+  "lg": var.$mq-lg,
+  "xl": var.$mq-xl,
 ) !default;
 
 @function get-break-point($_break-point) {
@@ -15,7 +15,7 @@ $break-points: (
 
   @if map.has-key($break-points, $_break-point) {
     $break-point: map.get($break-points, $_break-point);
-  } @else if meta.type-of($_break-point) != 'number' {
+  } @else if meta.type-of($_break-point) != "number" {
     @error '#{ $_break-point } is not a number.';
   } @else {
     $break-point: $_break-point;
@@ -33,7 +33,7 @@ $break-points: (
 @mixin mq-gt($_break-point, $unit: px) {
   $break-point: get-break-point($_break-point);
 
-  @if $unit == 'px' {
+  @if $unit == "px" {
     @media screen and (width > max(#{$break-point}#{$unit}, #{calc($break-point / 16)}rem)) {
       @content;
     }
@@ -47,7 +47,7 @@ $break-points: (
 @mixin mq-gte($_break-point, $unit: px) {
   $break-point: get-break-point($_break-point);
 
-  @if $unit == 'px' {
+  @if $unit == "px" {
     @media screen and (width >= max(#{$break-point}#{$unit}, #{calc($break-point / 16)}rem)) {
       @content;
     }
@@ -61,7 +61,7 @@ $break-points: (
 @mixin mq-lt($_break-point, $unit: px) {
   $break-point: get-break-point($_break-point);
 
-  @if $unit == 'px' {
+  @if $unit == "px" {
     @media screen and (width < max(#{$break-point}#{$unit}, #{calc($break-point / 16)}rem)) {
       @content;
     }
@@ -75,7 +75,7 @@ $break-points: (
 @mixin mq-lte($_break-point, $unit: px) {
   $break-point: get-break-point($_break-point);
 
-  @if $unit == 'px' {
+  @if $unit == "px" {
     @media screen and (width <= max(#{$break-point}#{$unit}, #{calc($break-point / 16)}rem)) {
       @content;
     }
@@ -90,7 +90,7 @@ $break-points: (
   $min: get-break-point($_min);
   $max: get-break-point($_max);
 
-  @if $unit == 'px' {
+  @if $unit == "px" {
     @media screen and (max(#{$min}#{$unit}, #{calc($min / 16)}rem) < width <= max(#{$max}#{$unit}, #{calc($max / 16)}rem)) {
       @content;
     }
@@ -154,7 +154,7 @@ $break-points: (
 // }
 
 @mixin line-clamp($count: 1) {
-  @if meta.type-of($count) != 'number' {
+  @if meta.type-of($count) != "number" {
     @error '#{ $count } is not a number.';
   }
 
