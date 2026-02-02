@@ -1,6 +1,7 @@
 ---
 import NoteLink from "@/components/module/NoteLink.astro";
 import Pagination from "@/components/module/Pagination.astro";
+import { NOTES } from "@/constants/notes.ts";
 import Layout from "@/layouts/Layout.astro";
 import { getNotes, type Notes } from "@/libs/microcms";
 import type { GetStaticPathsOptions } from "astro";
@@ -8,7 +9,7 @@ import type { MicroCMSListResponse } from "microcms-js-sdk";
 
 const notes = await getNotes({
   fields: ["id", "title", "icon", "tags", "publishedAt"],
-  limit: 10,
+  limit: NOTES.limit,
 });
 
 /**
@@ -23,7 +24,7 @@ export const getStaticPaths = async ({ paginate }: GetStaticPathsOptions) => {
    * Astroのpaginate関数を使用してページネーションを設定
    * paginate(response.contents, { pageSize: 3 })
    */
-  return paginate(response.contents, { pageSize: 1 });
+  return paginate(response.contents, { pageSize: NOTES.limit });
 };
 
 const { page } = Astro.props;

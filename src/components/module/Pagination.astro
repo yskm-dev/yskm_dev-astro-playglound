@@ -16,6 +16,7 @@ interface Props {
 }
 const { data, currentPage, lastPage, urlPrev, urlNext } = Astro.props;
 
+
 // ページネーションの表示設定
 const MAX_PAGE_LINKS = 3;
 // 表示するページリンクの開始と終了を計算
@@ -24,6 +25,8 @@ const endPage = Math.min(lastPage, startPage + MAX_PAGE_LINKS - 1);
 // 前後に省略記号を表示するかどうかを判定
 const hasStartPageLink = startPage > 1;
 const hasEndPageLink = endPage < lastPage;
+
+
 ---
 
 <app-pagination>
@@ -33,7 +36,7 @@ const hasEndPageLink = endPage < lastPage;
       {() => {
         if(urlPrev) {
           return (
-            <a href={urlPrev} aria-label="前のページへ"> <IconPrev /> </a>
+            <a href={urlPrev === "/notes/page/1" ? "/notes" : urlPrev} aria-label="前のページへ"> <IconPrev /> </a>
           )
         }
       }}
@@ -51,16 +54,21 @@ const hasEndPageLink = endPage < lastPage;
         ) : null
       }
       {/* ページ番号のリンクを表示 */}
-      {
-        Array.from({ length: lastPage }, (_, index) => index + 1).map((pageCount) => pageCount === currentPage ? (
-          <li class:list={["page", { current: true }]} aria-current="page">
-            <span> {pageCount} </span>
+      {Array.from(
+        { length: endPage - startPage + 1 },
+        (_, i) => startPage + i
+      ).map((pageCount) => {
+        return pageCount !== currentPage ? (
+          <li class="page">
+            <a href={pageCount === 1 ? `/notes/` : `/notes/page/${pageCount}/`}>
+              {pageCount}
+            </a>
           </li>
         ) : (
           <li class="page">
-            <a href={`/notes/page/${pageCount}/`}> {pageCount} </a>
+            <span class="current" aria-current="page">{pageCount}</span>
           </li>
-        ))
+        )})
       }
       {
         hasEndPageLink ? (

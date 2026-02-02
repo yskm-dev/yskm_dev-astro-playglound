@@ -1,13 +1,14 @@
 ---
 import NoteLink from "@/components/module/NoteLink.astro";
 import Pagination from "@/components/module/Pagination.astro";
+import { NOTES } from "@/constants/notes.ts";
 import Layout from "@/layouts/Layout.astro";
 import { getNotes } from "@/libs/microcms";
 const notes = await getNotes({
   fields: ["id", "title", "icon", "tags", "publishedAt"],
-  limit: 10,
+  limit: NOTES.limit,
 });
-const lastPage = Math.ceil(notes.totalCount / 1);
+const lastPage = Math.ceil(notes.totalCount / NOTES.limit);
 const urlNext = lastPage > 1 ? "/notes/page/2" : null;
 ---
 
@@ -24,13 +25,17 @@ const urlNext = lastPage > 1 ? "/notes/page/2" : null;
       })
     }
   </ul>
-  <Pagination
-    data={notes.contents}
-    currentPage={1}
-    lastPage={lastPage}
-    urlPrev={null}
-    urlNext={urlNext}
-  />
+  {
+    urlNext && (
+      <Pagination
+        data={notes.contents}
+        currentPage={1}
+        lastPage={lastPage}
+        urlPrev={null}
+        urlNext={urlNext}
+      />
+    )
+  }
 </Layout>
 
 <style lang="scss">
