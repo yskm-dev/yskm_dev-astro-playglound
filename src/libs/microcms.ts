@@ -3,10 +3,11 @@ import {
   type MicroCMSListContent,
   type MicroCMSQueries,
 } from "microcms-js-sdk";
-
+console.log(import.meta.env.PUBLIC_MICROCMS_SERVICE_DOMAIN);
+console.log(import.meta.env.PUBLIC_MICROCMS_PRODUCTION_API_KEY);
 export const client = createClient({
-  serviceDomain: import.meta.env.MICROCMS_SERVICE_DOMAIN || "",
-  apiKey: import.meta.env.MICROCMS_PRODUCTION_API_KEY || "",
+  serviceDomain: import.meta.env.PUBLIC_MICROCMS_SERVICE_DOMAIN || "",
+  apiKey: import.meta.env.PUBLIC_MICROCMS_PRODUCTION_API_KEY || "",
 });
 
 export type Tags = {
@@ -33,6 +34,7 @@ export const getNotes = async (queries?: MicroCMSQueries) => {
 export const getNotesDetail = async (
   contentId: string,
   queries?: MicroCMSQueries,
+  draftKey?: string | null,
 ) => {
   return await client.getListDetail<Notes>({
     endpoint: "notes",
