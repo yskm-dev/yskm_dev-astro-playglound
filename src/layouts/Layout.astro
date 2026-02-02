@@ -9,7 +9,11 @@ const pathname = Astro.url.pathname;
 
 const pageInfo = getPageInfo(pathname);
 
-const { title: _title, description: _description } = Astro.props;
+const {
+  title: _title,
+  description: _description,
+  noIndex: _noIndex,
+} = Astro.props;
 const lang = "ja";
 const isHome = pageInfo?.isHome;
 const title = isHome
@@ -17,6 +21,7 @@ const title = isHome
   : `${_title || pageInfo.title} | ${SITE_NAME}`;
 const description =
   _description || pageInfo.description || "yskm_devのサイトです。";
+const isNoIndex = _noIndex || pageInfo?.isNoIndex || false;
 ---
 
 <html lang="ja">
@@ -25,6 +30,7 @@ const description =
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
+    {isNoIndex && <meta name="robots" content="noindex" />}
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="og:locale" content="ja_JP" />
@@ -44,9 +50,7 @@ const description =
       href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
       rel="stylesheet"
     />
-    <script>
-      
-    </script>
+    <script></script>
   </head>
   <body>
     <div class="wrapper">

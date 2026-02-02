@@ -37,6 +37,21 @@ export const SITE_MAP = {
       description: "コードのスケッチやドローイングを掲載するページ（準備中）",
       children: [],
     },
+    {
+      slug: "preview",
+      title: "Preview",
+      description: "",
+      isNoIndex: true,
+      children: [
+        {
+          slug: "notes",
+          title: "Notes Preview",
+          description: "",
+          isNoIndex: true,
+          children: [],
+        },
+      ],
+    },
   ],
 };
 
@@ -45,6 +60,7 @@ type PageInfo = {
   title: string;
   description?: string;
   isHome?: boolean;
+  isNoIndex?: boolean;
   children: PageInfo[];
 };
 
