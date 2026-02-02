@@ -3,6 +3,8 @@ import Layout from "@/layouts/Layout.astro";
 import { getNotes, getNotesDetail } from "@/libs/microcms";
 import { Code } from "astro:components";
 
+export const prerender = false;
+
 export async function getStaticPaths() {
   const response = await getNotes({ fields: ["id"] });
   return response.contents.map((note) => ({
@@ -11,9 +13,26 @@ export async function getStaticPaths() {
 }
 
 const { id } = Astro.params as { id: string };
+if (!id) throw new Error("id is required");
+
+const url = new URL(Astro.url.href);
+const draftKey = url.searchParams.get("draftKey");
+
+// キャッシュポリシーの定義
+const cachePolicies = {
+  noCache: "no-store, no-cache, max-age=0, must-revalidate",
+  publicIsr: "public, s-maxage=30, stale-while-revalidate=30",
+};
+
 const notes = await getNotesDetail(id, {
+  draftKey: draftKey || undefined,
   fields: ["id", "title", "publishedAt", "content", "icon", "tags"],
 });
+
+if (!notes.content) {
+  Astro.response.headers.set("Cache-Control", cachePolicies.noCache);
+  return Astro.redirect("/404", 302);
+}
 
 // HTMLをパースしてコードブロックを抽出
 const codeBlockRegex =

@@ -3,8 +3,6 @@ import {
   type MicroCMSListContent,
   type MicroCMSQueries,
 } from "microcms-js-sdk";
-console.log(import.meta.env.PUBLIC_MICROCMS_SERVICE_DOMAIN);
-console.log(import.meta.env.PUBLIC_MICROCMS_PRODUCTION_API_KEY);
 export const client = createClient({
   serviceDomain: import.meta.env.PUBLIC_MICROCMS_SERVICE_DOMAIN || "",
   apiKey: import.meta.env.PUBLIC_MICROCMS_PRODUCTION_API_KEY || "",
