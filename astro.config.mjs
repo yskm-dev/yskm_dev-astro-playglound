@@ -1,13 +1,14 @@
 // @ts-check
 import cloudflare from "@astrojs/cloudflare";
-import preact from "@astrojs/preact";
+import sitemap from "@astrojs/sitemap";
 import { defineConfig } from "astro/config";
 
 // https://astro.build/config
 export default defineConfig({
+  site: import.meta.env.SITE_URL || "http://localhost:3000",
   adapter: cloudflare(),
   output: "static",
-  integrations: [preact({ compat: true })],
+  integrations: [sitemap()],
   redirects: {
     "/notes/page/1": {
       // リダイレクト元のパス
@@ -15,4 +16,5 @@ export default defineConfig({
       destination: "/notes", // リダイレクト先のパス
     },
   },
+  server: { host: true, open: true },
 });
