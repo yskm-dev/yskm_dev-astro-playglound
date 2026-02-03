@@ -11,12 +11,14 @@
     "lint:astro": "eslint 'src/**/*.astro'",
     "lint:prettier": "prettier --check './src/**/*.{astro,js,jsx,ts,tsx,css,scss}'",
     "lint:style": "stylelint 'src/**/*.{css,scss,astro}'",
+    "lint:markuplint": "markuplint 'src/**/*.astro'",
     "fix:ts": "eslint 'src/**/*.{ts,tsx}' --fix",
     "fix:astro": "eslint 'src/**/*.astro' --fix",
     "fix:prettier": "prettier './src/**/*.{astro,js,jsx,ts,tsx,css,scss}' --write .",
     "fix:style": "stylelint 'src/**/*.{css,scss,astro}' --fix",
-    "fix": "npm run fix:ts && npm run fix:prettier && npm run fix:style",
-    "lint": "npm run lint:ts && npm run lint:prettier && npm run lint:style"
+    "fix:markuplint": "markuplint 'src/**/*.astro' --fix",
+    "fix": "npm run fix:ts && npm run fix:prettier && npm run fix:style && npm run fix:astro && npm run fix:markuplint",
+    "lint": "npm run lint:ts && npm run lint:prettier && npm run lint:style && npm run lint:astro && npm run lint:markuplint"
   },
   "overrides": {
     "react": "npm:@preact/compat@latest",
