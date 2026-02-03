@@ -3,7 +3,7 @@ import Layout from "@/layouts/Layout.astro";
 import { getNotes, getNotesDetail } from "@/libs/microcms";
 import { Code } from "astro:components";
 
-export const prerender = false;
+export const prerender = true;
 
 export async function getStaticPaths() {
   const response = await getNotes({ fields: ["id"] });
@@ -142,55 +142,52 @@ if (lastIndex < notes.content.length) {
     </div>
     <a class="backLink" href="/notes"> 一覧へ戻る </a>
   </article>
-</Layout>
+  <script is:inline>
+    function attachCopyButtons() {
+      let copyButtonLabel = "Copy";
+      let codeBlocks = Array.from(document.querySelectorAll("pre"));
 
-<script is:inline>
-  function attachCopyButtons() {
-    let copyButtonLabel = "Copy";
-    let codeBlocks = Array.from(document.querySelectorAll("pre"));
-
-    for (let codeBlock of codeBlocks) {
-      let copyWrapper = document.createElement("span");
-      copyWrapper.className = "copy";
-      copyWrapper.style.position = "absolute";
-      copyWrapper.setAttribute("aria-describedby", "tooltip");
-      copyWrapper.innerHTML = `
-        <button type="button" class="copyButton" aria-label="コードをクリップボードにコピーする">${copyButtonLabel}</button>
-        <span class="copyTooltip" role="tooltip" aria-hidden="true" id="tooltip" aria-label="コードをクリップボードにコピーしました">Copied!</span>`;
-      requestAnimationFrame(() => {
-        let timeout: ReturnType<typeof setTimeout>;
-        const copyButton = copyWrapper.querySelector(".copyButton");
-        console.log(copyWrapper);
-        const copyTooltip = copyWrapper.querySelector(".copyTooltip");
-        const handleKeyDown = (event: KeyboardEvent) => {
-          if (event.key === "Escape") {
-            if (timeout) clearTimeout(timeout);
-            copyTooltip?.setAttribute("aria-hidden", "true");
-            document.removeEventListener("keydown", handleKeyDown);
-          }
-        };
-        codeBlock.parentElement?.append(copyWrapper);
-        copyButton?.addEventListener("click", async () => {
-          const codeElement = codeBlock.querySelector("code");
-          let code = codeElement?.textContent ?? codeBlock.textContent ?? "";
-          try {
-            await navigator.clipboard.writeText(code);
-            copyTooltip?.setAttribute("aria-hidden", "false");
-            document.addEventListener("keydown", handleKeyDown);
-            timeout = setTimeout(() => {
+      for (let codeBlock of codeBlocks) {
+        let copyWrapper = document.createElement("span");
+        copyWrapper.className = "copy";
+        copyWrapper.style.position = "absolute";
+        copyWrapper.setAttribute("aria-describedby", "tooltip");
+        copyWrapper.innerHTML = `
+          <button type="button" class="copyButton" aria-label="コードをクリップボードにコピーする">${copyButtonLabel}</button>
+          <span class="copyTooltip" role="tooltip" aria-hidden="true" id="tooltip" aria-label="コードをクリップボードにコピーしました">Copied!</span>`;
+        requestAnimationFrame(() => {
+          const copyButton = copyWrapper.querySelector(".copyButton");
+          console.log(copyWrapper);
+          const copyTooltip = copyWrapper.querySelector(".copyTooltip");
+          const handleKeyDown = (event) => {
+            if (event.key === "Escape") {
+              if (timeout) clearTimeout(timeout);
               copyTooltip?.setAttribute("aria-hidden", "true");
               document.removeEventListener("keydown", handleKeyDown);
-            }, 3000);
-          } catch (err) {
-            console.error("Failed to copy text: ", err);
-          }
+            }
+          };
+          codeBlock.parentElement?.append(copyWrapper);
+          copyButton?.addEventListener("click", async () => {
+            const codeElement = codeBlock.querySelector("code");
+            let code = codeElement?.textContent ?? codeBlock.textContent ?? "";
+            try {
+              await navigator.clipboard.writeText(code);
+              copyTooltip?.setAttribute("aria-hidden", "false");
+              document.addEventListener("keydown", handleKeyDown);
+              timeout = setTimeout(() => {
+                copyTooltip?.setAttribute("aria-hidden", "true");
+                document.removeEventListener("keydown", handleKeyDown);
+              }, 3000);
+            } catch (err) {
+              console.error("Failed to copy text: ", err);
+            }
+          });
         });
-      });
-      // ... rest of the function
+      }
     }
-  }
-  attachCopyButtons();
-</script>
+    attachCopyButtons();
+  </script>
+</Layout>
 
 <style lang="scss">
   @use "@/styles/variables" as var;
@@ -251,8 +248,14 @@ if (lastIndex < notes.content.length) {
     font-size: var(--font-size-small);
   }
 
-  .content :global(*) {
+  .content :global(p) {
     margin-block: var(--margin-s);
+  }
+
+  .content :global(figure),
+  .content > :global(ul),
+  .content > :global(ol) {
+    margin-block: var(--margin-m);
   }
 
   .content :global(h2) {
@@ -281,7 +284,6 @@ if (lastIndex < notes.content.length) {
   }
 
   .content :global(p) {
-    margin-block: var(--margin-s);
     font-size: var(--font-size-base);
     line-height: var(--line-height-base);
   }
@@ -289,77 +291,6 @@ if (lastIndex < notes.content.length) {
   .content :global(hr) {
     margin: var(--margin-l) 0;
     border-top: rem(1) solid var(--color-border);
-  }
-
-  .content :global(p > code) {
-    padding: rem(2) rem(4);
-    font-size: var(--font-size-middle);
-    color: var(--color-syntax-text);
-    background-color: var(--color-syntax-bg);
-    border-radius: rem(4);
-  }
-
-  .p-large {
-    margin-block: var(--margin-s);
-    font-size: var(--font-size-large);
-    line-height: var(--line-height-base);
-  }
-
-  .p-small {
-    margin-block: var(--margin-s);
-    font-size: var(--font-size-small);
-    line-height: var(--line-height-base);
-  }
-
-  .border-bottom {
-    padding-bottom: var(--margin-xs);
-    border-bottom: rem(1) solid var(--color-border);
-  }
-
-  .box {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    margin-bottom: var(--margin-l);
-    font-weight: 600;
-    color: var(--color-background);
-    background-color: var(--color-text);
-
-    &[data-size="xxl"] {
-      height: var(--margin-xxl);
-      font-weight: 600;
-    }
-
-    &[data-size="xl"] {
-      height: var(--margin-xl);
-    }
-
-    &[data-size="l"] {
-      height: var(--margin-l);
-    }
-
-    &[data-size="m"] {
-      height: var(--margin-m);
-    }
-
-    &[data-size="s"] {
-      height: var(--margin-s);
-    }
-
-    &[data-size="xs"] {
-      height: var(--margin-xs);
-    }
-
-    &[data-size="xxs"] {
-      height: var(--margin-xxs);
-    }
-  }
-
-  .palletList {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(rem(240), 1fr));
-    gap: var(--margin-l);
   }
 
   .content :global(pre),
@@ -477,6 +408,77 @@ if (lastIndex < notes.content.length) {
       color: var(--color-primary);
       text-decoration: none;
     }
+  }
+
+  .content :global(p > code) {
+    padding: rem(2) rem(4);
+    font-size: var(--font-size-middle);
+    color: var(--color-syntax-text);
+    background-color: var(--color-syntax-bg);
+    border-radius: rem(4);
+  }
+
+  .p-large {
+    margin-block: var(--margin-s);
+    font-size: var(--font-size-large);
+    line-height: var(--line-height-base);
+  }
+
+  .p-small {
+    margin-block: var(--margin-s);
+    font-size: var(--font-size-small);
+    line-height: var(--line-height-base);
+  }
+
+  .border-bottom {
+    padding-bottom: var(--margin-xs);
+    border-bottom: rem(1) solid var(--color-border);
+  }
+
+  .box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: var(--margin-l);
+    font-weight: 600;
+    color: var(--color-background);
+    background-color: var(--color-text);
+
+    &[data-size="xxl"] {
+      height: var(--margin-xxl);
+      font-weight: 600;
+    }
+
+    &[data-size="xl"] {
+      height: var(--margin-xl);
+    }
+
+    &[data-size="l"] {
+      height: var(--margin-l);
+    }
+
+    &[data-size="m"] {
+      height: var(--margin-m);
+    }
+
+    &[data-size="s"] {
+      height: var(--margin-s);
+    }
+
+    &[data-size="xs"] {
+      height: var(--margin-xs);
+    }
+
+    &[data-size="xxs"] {
+      height: var(--margin-xxs);
+    }
+  }
+
+  .palletList {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(rem(240), 1fr));
+    gap: var(--margin-l);
   }
 
   .backLink {
