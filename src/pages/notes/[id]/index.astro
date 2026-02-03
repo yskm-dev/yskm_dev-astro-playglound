@@ -144,7 +144,7 @@ if (lastIndex < notes.content.length) {
   </article>
 </Layout>
 
-<script>
+<script is:inline>
   function attachCopyButtons() {
     let copyButtonLabel = "Copy";
     let codeBlocks = Array.from(document.querySelectorAll("pre"));
@@ -249,6 +249,10 @@ if (lastIndex < notes.content.length) {
   .date {
     display: block;
     font-size: var(--font-size-small);
+  }
+
+  .content :global(*) {
+    margin-block: var(--margin-s);
   }
 
   .content :global(h2) {
@@ -366,6 +370,7 @@ if (lastIndex < notes.content.length) {
 
   .content :global([data-filename]) {
     position: relative;
+    margin-block: var(--margin-l);
 
     &::before {
       position: absolute;
@@ -450,12 +455,12 @@ if (lastIndex < notes.content.length) {
   .content :global(ul) {
     :global(li) {
       position: relative;
-      padding-left: var(--margin-s);
+      padding-left: var(--margin-m);
       margin-block: var(--margin-xs);
 
       &::before {
         position: absolute;
-        top: 50%;
+        top: rem(13);
         left: 0;
         width: rem(4);
         height: rem(4);
@@ -483,5 +488,26 @@ if (lastIndex < notes.content.length) {
     color: var(--color-text);
     text-decoration: underline;
     text-underline-offset: rem(4);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .backLink:hover {
+      color: var(--color-primary);
+      text-decoration: none;
+    }
+  }
+
+  .content :global(table) {
+    margin: var(--margin-xl) 0;
+  }
+
+  .content :global(th),
+  .content :global(td) {
+    padding: var(--margin-xs) var(--margin-l);
+    border: 1px solid var(--color-text);
+  }
+
+  .content :global(th) {
+    background-color: var(--color-border);
   }
 </style>
