@@ -29,6 +29,15 @@ const notes = await getNotesDetail(id, {
   fields: ["id", "title", "publishedAt", "content", "icon", "tags"],
 });
 
+// キャッシュヘッダーの設定
+Astro.response.headers.set(
+  "Cache-Control",
+  // draftKeyがある場合はキャッシュしない
+  // ない場合は30秒のISRを設定
+  draftKey ? cachePolicies.noCache : cachePolicies.publicIsr,
+);
+
+// ノートが見つからない場合は404にリダイレクト
 if (!notes.content) {
   Astro.response.headers.set("Cache-Control", cachePolicies.noCache);
   return Astro.redirect("/404", 302);
@@ -36,12 +45,11 @@ if (!notes.content) {
 
 // HTMLをパースしてコードブロックを抽出
 const codeBlockRegex =
-  /<div data-filename="([^"]*)">\s*<pre><code class="language-([^"]*)">([\s\S]*?)<\/code><\/pre>\s*<\/div>/g;
+  /<pre><code class="language-([^"]*)">([\s\S]*?)<\/code><\/pre>/g;
 const contentParts: {
   type: "html" | "code";
   content: string;
   lang?: string;
-  filename?: string;
 }[] = [];
 
 let lastIndex = 0;
@@ -57,11 +65,10 @@ while ((match = codeBlockRegex.exec(notes.content)) !== null) {
   }
 
   // コードブロックを追加
-  const filename = match[1];
-  const lang = match[2];
+  const lang = match[1];
 
   // HTMLエンティティをデコード（改行とインデントを保持）
-  let code = match[3];
+  let code = match[2];
 
   // HTMLエンティティのデコード（&amp; を最後に処理する必要がある）
   code = code
@@ -77,7 +84,6 @@ while ((match = codeBlockRegex.exec(notes.content)) !== null) {
     type: "code",
     content: code,
     lang,
-    filename,
   });
 
   lastIndex = match.index + match[0].length;
@@ -92,7 +98,13 @@ if (lastIndex < notes.content.length) {
 }
 ---
 
-<Layout title={`${notes.title} | Notes`} description={`${notes.content}`}>
+<Layout
+  title={`${notes.title} | Notes`}
+  description={`${notes.content
+    .replace(/<[^>]+>/g, "")
+    .replace(/\*/g, "")
+    .slice(0, 160)}...`}
+>
   <article>
     <div class="header">
       <div class="icon" aria-hidden="true">{notes.icon}</div>
@@ -113,12 +125,18 @@ if (lastIndex < notes.content.length) {
             }
           </time>
         </div>
-        <div class="column">
-          <p class="columnTitle">タグ:</p>
-          <ul class="columnTags">
-            {notes.tags.map((tag) => <li>#{tag.name}</li>)}
-          </ul>
-        </div>
+        {
+          notes.tags.length > 0 && (
+            <div class="column">
+              <p class="columnTitle">タグ:</p>
+              <ul class="columnTags">
+                {notes.tags.map((tag) => (
+                  <li>#{tag.name}</li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
       </div>
     </div>
 
@@ -127,12 +145,10 @@ if (lastIndex < notes.content.length) {
         contentParts.map((part) => {
           if (part.type === "code") {
             return (
-              <div data-filename={part.filename}>
-                <Code
-                  code={part.content}
-                  lang={(part.lang || "plaintext") as any}
-                />
-              </div>
+              <Code
+                code={part.content}
+                lang={(part.lang || "plaintext") as any}
+              />
             );
           } else {
             return <Fragment set:html={part.content} />;
@@ -146,42 +162,66 @@ if (lastIndex < notes.content.length) {
     function attachCopyButtons() {
       let copyButtonLabel = "Copy";
       let codeBlocks = Array.from(document.querySelectorAll("pre"));
+      const copiedMessage = `<span class="copyTooltipMessage" aria-label="コードをクリップボードにコピーしました">Copied!</span>`;
+
+      const addMessage = function (el) {
+        el.classList.add("visible");
+        el.innerHTML = copiedMessage;
+      };
+
+      const removeMessage = function (el) {
+        el.classList.remove("visible");
+        el.addEventListener(
+          "transitionend",
+          () => {
+            el.innerHTML = "";
+          },
+          { once: true },
+        );
+      };
 
       for (let codeBlock of codeBlocks) {
         let copyWrapper = document.createElement("span");
-        copyWrapper.className = "copy";
+        copyWrapper.classList.add("copyWrapper");
         copyWrapper.style.position = "absolute";
-        copyWrapper.setAttribute("aria-describedby", "tooltip");
         copyWrapper.innerHTML = `
           <button type="button" class="copyButton" aria-label="コードをクリップボードにコピーする">${copyButtonLabel}</button>
-          <span class="copyTooltip" role="tooltip" aria-hidden="true" id="tooltip" aria-label="コードをクリップボードにコピーしました">Copied!</span>`;
+          <span class="copyTooltip" role="tooltip" aria-live="polite">
+          </span>`;
+        codeBlock.appendChild(copyWrapper);
+
         requestAnimationFrame(() => {
+          let timeout;
+
           const copyButton = copyWrapper.querySelector(".copyButton");
-          console.log(copyWrapper);
           const copyTooltip = copyWrapper.querySelector(".copyTooltip");
+
+          if (!copyButton || !copyTooltip) return;
+
           const handleKeyDown = (event) => {
             if (event.key === "Escape") {
               if (timeout) clearTimeout(timeout);
-              copyTooltip?.setAttribute("aria-hidden", "true");
+              removeMessage(copyTooltip);
               document.removeEventListener("keydown", handleKeyDown);
             }
           };
-          codeBlock.parentElement?.append(copyWrapper);
-          copyButton?.addEventListener("click", async () => {
+
+          const handleClick = async () => {
             const codeElement = codeBlock.querySelector("code");
             let code = codeElement?.textContent ?? codeBlock.textContent ?? "";
             try {
               await navigator.clipboard.writeText(code);
-              copyTooltip?.setAttribute("aria-hidden", "false");
+              addMessage(copyTooltip);
               document.addEventListener("keydown", handleKeyDown);
               timeout = setTimeout(() => {
-                copyTooltip?.setAttribute("aria-hidden", "true");
+                removeMessage(copyTooltip);
                 document.removeEventListener("keydown", handleKeyDown);
               }, 3000);
             } catch (err) {
               console.error("Failed to copy text: ", err);
             }
-          });
+          };
+          copyButton?.addEventListener("click", handleClick);
         });
       }
     }
@@ -252,6 +292,15 @@ if (lastIndex < notes.content.length) {
     margin-block: var(--margin-s);
   }
 
+  .content :global(blockquote) {
+    padding: var(--margin-m) var(--margin-l);
+    margin-block: var(--margin-m);
+    font-size: var(--font-size-middle);
+    color: var(--color-text);
+    background-color: var(--color-border);
+    border-left: rem(8) solid var(--color-text);
+  }
+
   .content :global(figure),
   .content > :global(ul),
   .content > :global(ol) {
@@ -299,6 +348,13 @@ if (lastIndex < notes.content.length) {
     white-space: pre;
   }
 
+  .content :global(.astro-code) {
+    position: relative;
+    padding: rem(16);
+    margin-block: var(--margin-l);
+    border-radius: rem(5);
+  }
+
   .content :global([data-filename]) {
     position: relative;
     margin-block: var(--margin-l);
@@ -316,16 +372,15 @@ if (lastIndex < notes.content.length) {
       background-color: #9ecbff;
       border-radius: 0 0 rem(4);
     }
+
+    :global(pre) {
+      padding: rem(54) rem(16) rem(16);
+    }
   }
 
-  .content :global(.astro-code) {
-    position: relative;
-    padding: rem(46) rem(16) rem(16);
-  }
-
-  .content :global(.copy) {
+  .content :global(.copyWrapper) {
     position: absolute;
-    top: rem(8);
+    top: rem(-16);
     right: rem(8);
     display: block;
     width: fit-content;
@@ -344,27 +399,35 @@ if (lastIndex < notes.content.length) {
   }
 
   .content :global(.copyTooltip) {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+
+    &.visible {
+      opacity: 1;
+    }
+  }
+
+  .content :global(.copyTooltipMessage) {
     position: absolute;
-    top: rem(-36);
     right: rem(-6);
+    bottom: rem(-16);
     padding: rem(4) rem(8);
     font-size: var(--font-size-small);
     color: #24292e;
     background-color: #9ecbff;
     border-radius: rem(2);
-    transition: 0.2s ease-in-out;
 
     &::after {
       position: absolute;
       inset-inline: 0;
-      bottom: rem(-6);
+      top: rem(-6);
       display: block;
       width: rem(8);
       height: rem(6);
       margin: auto;
       content: "";
       background-color: #9ecbff;
-      clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
+      clip-path: polygon(0% 100%, 100% 100%, 50% 0%);
     }
   }
 
@@ -381,6 +444,17 @@ if (lastIndex < notes.content.length) {
   .content :global(a) {
     text-decoration: underline;
     text-underline-offset: rem(4);
+  }
+
+  .content :global(ol) {
+    padding-left: var(--margin-m);
+    list-style-position: outside;
+    list-style-type: decimal;
+
+    :global(li) {
+      position: relative;
+      margin-block: var(--margin-xs);
+    }
   }
 
   .content :global(ul) {
@@ -505,7 +579,7 @@ if (lastIndex < notes.content.length) {
 
   .content :global(th),
   .content :global(td) {
-    padding: var(--margin-xs) var(--margin-l);
+    padding: var(--margin-xs) var(--margin-m);
     border: 1px solid var(--color-text);
   }
 

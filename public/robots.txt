@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://yskm-dev-astro-playglound.pages.dev/sitemap-index.xml
