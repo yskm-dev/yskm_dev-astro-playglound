@@ -7,14 +7,26 @@ export const prerender = false;
 const { id } = Astro.params as { id: string };
 if (!id) throw new Error("id is required");
 
-const notes = await getNotesDetail(id, {
-  fields: ["id", "title", "publishedAt", "content", "contents", "icon", "tags"],
-});
+const url = new URL(Astro.url.href);
+const draftKey = url.searchParams.get("draftKey");
+
+if (!draftKey) {
+  return Astro.redirect(`/notes/${id}`, 302);
+}
 
 Astro.response.headers.set(
   "Cache-Control",
-  "public, s-maxage=30, stale-while-revalidate=30",
+  "no-store, no-cache, max-age=0, must-revalidate",
 );
+
+const notes = await getNotesDetail(id, {
+  draftKey,
+  fields: ["id", "title", "publishedAt", "content", "contents", "icon", "tags"],
+});
+
+if (!notes) {
+  return Astro.redirect("/404", 302);
+}
 ---
 
 <Layout
@@ -23,7 +35,9 @@ Astro.response.headers.set(
     .replace(/<[^>]+>/g, "")
     .replace(/\*/g, "")
     .slice(0, 160)}...`}
+  noIndex={true}
 >
+  <div class="previewBanner" role="status">プレビューモード</div>
   <article>
     <div class="header">
       <div class="icon" aria-hidden="true">{notes.icon}</div>
@@ -152,6 +166,17 @@ Astro.response.headers.set(
   @use "@/styles/variables" as var;
   @use "@/styles/extension" as *;
 
+  .previewBanner {
+    padding: rem(8) rem(16);
+    margin-bottom: var(--margin-l);
+    font-size: var(--font-size-small);
+    font-weight: 600;
+    color: #fff;
+    text-align: center;
+    background-color: #e65100;
+    border-radius: rem(4);
+  }
+
   .header {
     padding-bottom: var(--margin-m);
     margin-bottom: var(--margin-l);
@@ -275,29 +300,6 @@ Astro.response.headers.set(
     border-radius: rem(5);
   }
 
-  .content :global([data-filename]) {
-    position: relative;
-    margin-block: var(--margin-l);
-
-    &::before {
-      position: absolute;
-      top: rem(0);
-      left: rem(0);
-      z-index: 2;
-      display: block;
-      padding: rem(4) rem(8);
-      font-size: var(--font-size-small);
-      color: #24292e;
-      content: attr(data-filename);
-      background-color: #9ecbff;
-      border-radius: 0 0 rem(4);
-    }
-
-    :global(pre) {
-      padding: rem(54) rem(16) rem(16);
-    }
-  }
-
   .content :global(.copyWrapper) {
     position: absolute;
     top: rem(-16);
@@ -351,16 +353,6 @@ Astro.response.headers.set(
     }
   }
 
-  .content :global(.copyTooltip[aria-hidden="true"]) {
-    visibility: hidden;
-    opacity: 0;
-  }
-
-  .content :global(.copyTooltip[aria-hidden="false"]) {
-    visibility: visible;
-    opacity: 1;
-  }
-
   .content :global(a) {
     text-decoration: underline;
     text-underline-offset: rem(4);
@@ -412,67 +404,18 @@ Astro.response.headers.set(
     border-radius: rem(4);
   }
 
-  .p-large {
-    margin-block: var(--margin-s);
-    font-size: var(--font-size-large);
-    line-height: var(--line-height-base);
+  .content :global(table) {
+    margin: var(--margin-xl) 0;
   }
 
-  .p-small {
-    margin-block: var(--margin-s);
-    font-size: var(--font-size-small);
-    line-height: var(--line-height-base);
+  .content :global(th),
+  .content :global(td) {
+    padding: var(--margin-xs) var(--margin-m);
+    border: 1px solid var(--color-text);
   }
 
-  .border-bottom {
-    padding-bottom: var(--margin-xs);
-    border-bottom: rem(1) solid var(--color-border);
-  }
-
-  .box {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    margin-bottom: var(--margin-l);
-    font-weight: 600;
-    color: var(--color-background);
-    background-color: var(--color-text);
-
-    &[data-size="xxl"] {
-      height: var(--margin-xxl);
-      font-weight: 600;
-    }
-
-    &[data-size="xl"] {
-      height: var(--margin-xl);
-    }
-
-    &[data-size="l"] {
-      height: var(--margin-l);
-    }
-
-    &[data-size="m"] {
-      height: var(--margin-m);
-    }
-
-    &[data-size="s"] {
-      height: var(--margin-s);
-    }
-
-    &[data-size="xs"] {
-      height: var(--margin-xs);
-    }
-
-    &[data-size="xxs"] {
-      height: var(--margin-xxs);
-    }
-  }
-
-  .palletList {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(rem(240), 1fr));
-    gap: var(--margin-l);
+  .content :global(th) {
+    background-color: var(--color-border);
   }
 
   .backLink {
@@ -491,19 +434,5 @@ Astro.response.headers.set(
       color: var(--color-primary);
       text-decoration: none;
     }
-  }
-
-  .content :global(table) {
-    margin: var(--margin-xl) 0;
-  }
-
-  .content :global(th),
-  .content :global(td) {
-    padding: var(--margin-xs) var(--margin-m);
-    border: 1px solid var(--color-text);
-  }
-
-  .content :global(th) {
-    background-color: var(--color-border);
   }
 </style>

@@ -30,10 +30,12 @@
     "@astrojs/sitemap": "^3.7.0",
     "astro": "^5.16.12",
     "gsap": "^3.14.2",
-    "microcms-js-sdk": "^3.2.0"
+    "microcms-js-sdk": "^3.2.0",
+    "prismjs": "^1.30.0"
   },
   "devDependencies": {
     "@markuplint/astro-parser": "^4.6.22",
+    "@types/prismjs": "^1.26.6",
     "@typescript-eslint/parser": "^8.53.1",
     "astro-eslint-parser": "^1.2.2",
     "eslint": "^9.39.2",

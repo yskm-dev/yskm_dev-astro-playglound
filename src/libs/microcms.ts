@@ -50,7 +50,6 @@ export const getNotes = async (queries?: MicroCMSQueries) => {
 export const getNotesDetail = async (
   contentId: string,
   queries?: MicroCMSQueries,
-  draftKey?: string | null,
 ) => {
   return await client.getListDetail<Notes>({
     endpoint: "notes",
