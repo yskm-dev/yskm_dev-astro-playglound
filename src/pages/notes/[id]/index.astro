@@ -45,7 +45,7 @@ Astro.response.headers.set(
           </time>
         </div>
         {
-          notes.tags.length > 0 && (
+          notes.tags?.length > 0 && (
             <div class="column">
               <p class="columnTitle">タグ:</p>
               <ul class="columnTags">
@@ -85,7 +85,7 @@ Astro.response.headers.set(
 
     const copyButtonLabel = "Copy";
     const codeBlocks = Array.from(document.querySelectorAll("pre"));
-    const copiedMessage = `<span class="copyTooltipMessage" aria-label="コードをクリップボードにコピーしました">Copied!</span>`;
+    const copiedMessage = `<span class="copyTooltipMessage" role="status">コピーしました</span>`;
 
     const addMessage = function (el: Element) {
       el.classList.add("visible");
@@ -101,6 +101,9 @@ Astro.response.headers.set(
         },
         { once: true },
       );
+      setTimeout(() => {
+        el.innerHTML = "";
+      }, 400);
     };
 
     for (const codeBlock of codeBlocks) {
@@ -129,6 +132,7 @@ Astro.response.headers.set(
       };
 
       const handleClick = async () => {
+        clearTimeout(timeout); // これを追加
         const codeElement = codeBlock.querySelector("code");
         const code = codeElement?.textContent ?? codeBlock.textContent ?? "";
         try {
@@ -275,7 +279,7 @@ Astro.response.headers.set(
     position: relative;
     padding: 0;
     margin-block: var(--margin-l);
-    overflow: hidden;
+    overflow: visible;
     border-radius: rem(5);
 
     :global(code) {
@@ -350,7 +354,7 @@ Astro.response.headers.set(
 
   .content :global(.copyTooltipMessage) {
     position: absolute;
-    right: rem(-6);
+    right: rem(-28);
     bottom: rem(-16);
     padding: rem(4) rem(8);
     font-size: var(--font-size-small);
@@ -370,16 +374,6 @@ Astro.response.headers.set(
       background-color: var(--color-syntax-blue);
       clip-path: polygon(0% 100%, 100% 100%, 50% 0%);
     }
-  }
-
-  .content :global(.copyTooltip[aria-hidden="true"]) {
-    visibility: hidden;
-    opacity: 0;
-  }
-
-  .content :global(.copyTooltip[aria-hidden="false"]) {
-    visibility: visible;
-    opacity: 1;
   }
 
   .content :global(a) {
@@ -431,69 +425,6 @@ Astro.response.headers.set(
     color: var(--color-syntax-text);
     background-color: var(--color-syntax-bg);
     border-radius: rem(4);
-  }
-
-  .p-large {
-    margin-block: var(--margin-s);
-    font-size: var(--font-size-large);
-    line-height: var(--line-height-base);
-  }
-
-  .p-small {
-    margin-block: var(--margin-s);
-    font-size: var(--font-size-small);
-    line-height: var(--line-height-base);
-  }
-
-  .border-bottom {
-    padding-bottom: var(--margin-xs);
-    border-bottom: rem(1) solid var(--color-border);
-  }
-
-  .box {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    margin-bottom: var(--margin-l);
-    font-weight: 600;
-    color: var(--color-background);
-    background-color: var(--color-text);
-
-    &[data-size="xxl"] {
-      height: var(--margin-xxl);
-      font-weight: 600;
-    }
-
-    &[data-size="xl"] {
-      height: var(--margin-xl);
-    }
-
-    &[data-size="l"] {
-      height: var(--margin-l);
-    }
-
-    &[data-size="m"] {
-      height: var(--margin-m);
-    }
-
-    &[data-size="s"] {
-      height: var(--margin-s);
-    }
-
-    &[data-size="xs"] {
-      height: var(--margin-xs);
-    }
-
-    &[data-size="xxs"] {
-      height: var(--margin-xxs);
-    }
-  }
-
-  .palletList {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(rem(240), 1fr));
-    gap: var(--margin-l);
   }
 
   .backLink {

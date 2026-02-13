@@ -23,7 +23,10 @@ const hasEndPageLink = endPage < lastPage;
 <app-pagination>
   <nav class="pagination" aria-label="ページネーション">
     {/* 前へを表示 */}
-    <div class:list={["prev", { invalid: !urlPrev }]} aria-hidden={!urlPrev}>
+    <div
+      class:list={["prev", { invalid: !urlPrev }]}
+      aria-hidden={!urlPrev ? "true" : undefined}
+    >
       {
         urlPrev && (
           <>
@@ -85,7 +88,10 @@ const hasEndPageLink = endPage < lastPage;
       }
     </ul>
     {/* 次へを表示 */}
-    <div class:list={["next", { invalid: !urlNext }]} aria-hidden={!urlNext}>
+    <div
+      class:list={["next", { invalid: !urlNext }]}
+      aria-hidden={!urlNext ? "true" : undefined}
+    >
       {
         urlNext && (
           <a href={urlNext} aria-label="次のページへ">

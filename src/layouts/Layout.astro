@@ -32,17 +32,17 @@ const isNoIndex = _noIndex || pageInfo?.isNoIndex || false;
     <meta name="generator" content={Astro.generator} />
     {isNoIndex && <meta name="robots" content="noindex" />}
     <title>{title}</title>
-    <meta name="description" content={description} />
-    <meta name="og:locale" content="ja_JP" />
-    <meta name="og:type" content="website" />
-    <meta name="og:title" content={title} />
-    <meta name="og:description" content={description} />
-    <meta name="og:url" content={Astro.site + pathname} />
-    <meta name="og:site_name" content={SITE_NAME} />
-    <meta name="og:image" content={Astro.site + "/ogp.png"} />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
+    <meta property="description" content={description} />
+    <meta property="og:locale" content="ja_JP" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={Astro.site + pathname} />
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:image" content={Astro.site + "/ogp.png"} />
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
