@@ -6,7 +6,6 @@ Astro + microCMS を使用した Jamstack ブログサイトです。
 
 - **フレームワーク**: [Astro](https://astro.build/)
 - **CMS**: [microCMS](https://microcms.io/)
-- **ホスティング**: [Cloudflare](https://www.cloudflare.com/)
 - **アニメーション**: [GSAP](https://gsap.com/)
 - **コードハイライト**: [Prism.js](https://prismjs.com/)
 
@@ -38,16 +37,16 @@ Astro + microCMS を使用した Jamstack ブログサイトです。
 
 すべてのコマンドはプロジェクトルートで実行します。
 
-| コマンド                    | 説明                                              |
-| :-------------------------- | :------------------------------------------------ |
-| `npm install`               | 依存関係をインストール                            |
-| `npm run dev`               | 開発サーバーを起動（`localhost:4321`）             |
-| `npm run build`             | 本番用にビルド（`./dist/`）                       |
-| `npm run preview`           | ビルド結果をローカルでプレビュー                  |
-| `npm run lint`              | リント（ESLint / Prettier / Stylelint / Markuplint） |
-| `npm run fix`               | リントエラーを自動修正                            |
-| `npm run astro ...`         | Astro CLI コマンドを実行                          |
-| `npm run astro -- --help`   | Astro CLI のヘルプを表示                          |
+| コマンド                  | 説明                                                 |
+| :------------------------ | :--------------------------------------------------- |
+| `npm install`             | 依存関係をインストール                               |
+| `npm run dev`             | 開発サーバーを起動（`localhost:4321`）               |
+| `npm run build`           | 本番用にビルド（`./dist/`）                          |
+| `npm run preview`         | ビルド結果をローカルでプレビュー                     |
+| `npm run lint`            | リント（ESLint / Prettier / Stylelint / Markuplint） |
+| `npm run fix`             | リントエラーを自動修正                               |
+| `npm run astro ...`       | Astro CLI コマンドを実行                             |
+| `npm run astro -- --help` | Astro CLI のヘルプを表示                             |
 
 ## 参考リンク
 
