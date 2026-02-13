@@ -14,10 +14,28 @@ export type Tags = {
 } & MicroCMSListContent;
 ``;
 
+/**
+ * カスタムフィールド
+ */
+
+// リッチテキスト
+export type ICustomFieldRichText = {
+  fieldId: "richText";
+  body?: string;
+};
+// iframe
+export type ICustomiframe = {
+  fieldId: "iframe";
+  body?: string;
+};
+
+export type IGuideCustomFields = (ICustomFieldRichText | ICustomiframe)[];
+
 export type Notes = {
   icon: string;
   title: string;
   content: string;
+  contents: IGuideCustomFields;
   tags: Tags[];
 } & MicroCMSListContent;
 

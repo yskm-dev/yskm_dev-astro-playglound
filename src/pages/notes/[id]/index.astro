@@ -3,7 +3,7 @@ import Layout from "@/layouts/Layout.astro";
 import { getNotes, getNotesDetail } from "@/libs/microcms";
 import { Code } from "astro:components";
 
-export const prerender = true;
+export const prerender = false;
 
 export async function getStaticPaths() {
   const response = await getNotes({ fields: ["id"] });
@@ -26,7 +26,7 @@ const cachePolicies = {
 
 const notes = await getNotesDetail(id, {
   draftKey: draftKey || undefined,
-  fields: ["id", "title", "publishedAt", "content", "icon", "tags"],
+  fields: ["id", "title", "publishedAt", "content", "contents", "icon", "tags"],
 });
 
 // キャッシュヘッダーの設定
@@ -38,64 +38,79 @@ Astro.response.headers.set(
 );
 
 // ノートが見つからない場合は404にリダイレクト
-if (!notes.content) {
+if (!notes.contents) {
   Astro.response.headers.set("Cache-Control", cachePolicies.noCache);
   return Astro.redirect("/404", 302);
 }
 
-// HTMLをパースしてコードブロックを抽出
-const codeBlockRegex =
-  /<pre><code class="language-([^"]*)">([\s\S]*?)<\/code><\/pre>/g;
 const contentParts: {
   type: "html" | "code";
   content: string;
   lang?: string;
 }[] = [];
 
-let lastIndex = 0;
-let match;
+notes.contents.forEach((content) => {
+  if (content.fieldId === "richText") {
+    if (!content.body) return;
+    // TODO: richTextの場合はcontent.bodyをパースして
+    // HTMLをパースしてコードブロックを抽出
+    const codeBlockRegex =
+      /<pre><code class="language-([^"]*)">([\s\S]*?)<\/code><\/pre>/g;
 
-while ((match = codeBlockRegex.exec(notes.content)) !== null) {
-  // マッチ前のHTMLを追加
-  if (match.index > lastIndex) {
-    contentParts.push({
-      type: "html",
-      content: notes.content.slice(lastIndex, match.index),
-    });
+    let lastIndex = 0;
+    let match;
+
+    while ((match = codeBlockRegex.exec(content.body)) !== null) {
+      // マッチ前のHTMLを追加
+      if (match.index > lastIndex) {
+        contentParts.push({
+          type: "html",
+          content: content.body.slice(lastIndex, match.index),
+        });
+      }
+
+      // コードブロックを追加
+      const lang = match[1];
+
+      // HTMLエンティティをデコード（改行とインデントを保持）
+      let code = match[2];
+
+      // HTMLエンティティのデコード（&amp; を最後に処理する必要がある）
+      code = code
+        .replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">")
+        .replace(/&quot;/g, '"')
+        .replace(/&#039;/g, "'")
+        .replace(/&#39;/g, "'")
+        .replace(/&amp;/g, "&")
+        .replace(/&apos;/g, "'");
+
+      contentParts.push({
+        type: "code",
+        content: code,
+        lang,
+      });
+
+      lastIndex = match.index + match[0].length;
+    }
+
+    // 残りのHTMLを追加
+    if (lastIndex < content.body.length) {
+      contentParts.push({
+        type: "html",
+        content: content.body.slice(lastIndex),
+      });
+    }
+  } else {
+    // その他のフィールドはそのままHTMLとして追加
+    if (content.body) {
+      contentParts.push({
+        type: "html",
+        content: content.body,
+      });
+    }
   }
-
-  // コードブロックを追加
-  const lang = match[1];
-
-  // HTMLエンティティをデコード（改行とインデントを保持）
-  let code = match[2];
-
-  // HTMLエンティティのデコード（&amp; を最後に処理する必要がある）
-  code = code
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"')
-    .replace(/&#039;/g, "'")
-    .replace(/&#39;/g, "'")
-    .replace(/&amp;/g, "&")
-    .replace(/&apos;/g, "'");
-
-  contentParts.push({
-    type: "code",
-    content: code,
-    lang,
-  });
-
-  lastIndex = match.index + match[0].length;
-}
-
-// 残りのHTMLを追加
-if (lastIndex < notes.content.length) {
-  contentParts.push({
-    type: "html",
-    content: notes.content.slice(lastIndex),
-  });
-}
+});
 ---
 
 <Layout
