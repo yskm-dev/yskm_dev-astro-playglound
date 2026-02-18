@@ -29,21 +29,20 @@ const isNoIndex = _noIndex || pageInfo?.isNoIndex || false;
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content={Astro.generator} />
     {isNoIndex && <meta name="robots" content="noindex" />}
     <title>{title}</title>
-    <meta property="description" content={description} />
+    <meta name="description" content={description} />
     <meta property="og:locale" content="ja_JP" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={SITE_URL + pathname} />
     <meta property="og:site_name" content={SITE_NAME} />
-    <meta property="og:image" content={SITE_URL + "ogp.png"} />
+    <meta property="og:image" content={SITE_URL + "/ogp.png"} />
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:title" content={title} />
     <meta property="twitter:description" content={description} />
-    <meta property="twitter:image" content={SITE_URL + "ogp.png"} />
+    <meta property="twitter:image" content={SITE_URL + "/ogp.png"} />
     <link rel="canonical" href={SITE_URL + pathname} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
