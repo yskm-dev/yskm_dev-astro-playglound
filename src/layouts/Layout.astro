@@ -3,7 +3,7 @@ import Drawer from "@/components/module/Drawer.astro";
 import Footer from "@/layouts/Footer.astro";
 import Header from "@/layouts/Header.astro";
 import "@/styles/globals.scss";
-import { getPageInfo, SITE_NAME } from "@/utils/sitemap";
+import { getPageInfo, SITE_NAME, SITE_URL } from "@/utils/sitemap";
 
 const pathname = Astro.url.pathname;
 
@@ -37,14 +37,14 @@ const isNoIndex = _noIndex || pageInfo?.isNoIndex || false;
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:url" content={Astro.site + pathname} />
+    <meta property="og:url" content={SITE_URL + pathname} />
     <meta property="og:site_name" content={SITE_NAME} />
-    <meta property="og:image" content={Astro.site + "ogp.png"} />
+    <meta property="og:image" content={SITE_URL + "ogp.png"} />
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:title" content={title} />
     <meta property="twitter:description" content={description} />
-    <meta property="twitter:image" content={Astro.site + "ogp.png"} />
-
+    <meta property="twitter:image" content={SITE_URL + "ogp.png"} />
+    <link rel="canonical" href={SITE_URL + pathname} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
