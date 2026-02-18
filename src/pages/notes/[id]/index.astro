@@ -236,6 +236,14 @@ Astro.response.headers.set(
     margin-block: var(--margin-m);
   }
 
+  .content :global(figure) {
+    :global(img) {
+      display: block;
+      border: 1px solid var(--color-border);
+      border-radius: rem(5);
+    }
+  }
+
   .content :global(h2) {
     padding-bottom: var(--margin-xs);
     margin-top: var(--margin-xl);
