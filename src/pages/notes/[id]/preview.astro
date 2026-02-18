@@ -31,11 +31,12 @@ if (!notes) {
 
 <Layout
   title={`${notes.title} | Notes`}
-  description={`${notes.content
-    .replace(/<[^>]+>/g, "")
-    .replace(/\*/g, "")
-    .slice(0, 160)}...`}
-  noIndex={true}
+  description={`${
+    notes.contents?.[0]?.body
+      ?.replace(/<[^>]+>/g, "")
+      .replace(/\*/g, "")
+      .slice(0, 160) ?? ""
+  }...`}
 >
   <div class="previewBanner" role="status">プレビューモード</div>
   <article>

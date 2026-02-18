@@ -19,10 +19,12 @@ Astro.response.headers.set(
 
 <Layout
   title={`${notes.title} | Notes`}
-  description={`${notes.content
-    .replace(/<[^>]+>/g, "")
-    .replace(/\*/g, "")
-    .slice(0, 160)}...`}
+  description={`${
+    notes.contents?.[0]?.body
+      ?.replace(/<[^>]+>/g, "")
+      .replace(/\*/g, "")
+      .slice(0, 160) ?? ""
+  }...`}
 >
   <article>
     <div class="header">
