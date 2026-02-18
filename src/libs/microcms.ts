@@ -1,5 +1,6 @@
 import {
   createClient,
+  type MicroCMSImage,
   type MicroCMSListContent,
   type MicroCMSQueries,
 } from "microcms-js-sdk";
@@ -39,12 +40,24 @@ export type Notes = {
   tags: Tags[];
 } & MicroCMSListContent;
 
+export type Sketches = {
+  title: string;
+  image: MicroCMSImage;
+  url: string;
+  tags: Tags[];
+  description: string;
+} & MicroCMSListContent;
+
 export const getTags = async (queries?: MicroCMSQueries) => {
   return await client.getList<Tags>({ endpoint: "tags", queries });
 };
 
 export const getNotes = async (queries?: MicroCMSQueries) => {
   return await client.getList<Notes>({ endpoint: "notes", queries });
+};
+
+export const getSketches = async (queries?: MicroCMSQueries) => {
+  return await client.getList<Sketches>({ endpoint: "sketch", queries });
 };
 
 export const getNotesDetail = async (

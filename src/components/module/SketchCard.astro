@@ -1,0 +1,106 @@
+---
+import { type Sketches } from "@/libs/microcms";
+export interface Props {
+  sketch: Sketches;
+}
+
+const { sketch } = Astro.props as Props;
+---
+
+<a
+  href={sketch.url}
+  target="_blank"
+  rel="noopener noreferrer"
+  class={`container  ${sketch}`}
+>
+  <div class="thumbnail">
+    <img
+      src={`${sketch.image.url}?w=384&h=136`}
+      width={384}
+      height={136}
+      alt={sketch.image.alt}
+    />
+  </div>
+  <div>
+    <p class="title">
+      {sketch.title}
+    </p>
+    <ul class="tag">
+      {sketch.tags.map((tag) => <li>#{tag.name}</li>)}
+    </ul>
+    <p class="description">
+      {sketch.description}
+    </p>
+  </div>
+</a>
+
+<style lang="scss">
+  @use "@/styles/variables" as var;
+  @use "@/styles/extension" as *;
+
+  .container {
+    display: flex;
+    gap: var(--margin-m);
+    padding: var(--margin-xs);
+    border: 1px solid var(--color-border);
+    border-radius: rem(5);
+  }
+
+  .thumbnail {
+    width: rem(192);
+
+    img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 1.414 / 1;
+      object-fit: cover;
+      border-radius: rem(3);
+    }
+  }
+
+  .title {
+    margin-top: var(--margin-xs);
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    line-height: var(--line-height-base);
+  }
+
+  .tag {
+    display: flex;
+    gap: var(--margin-xs);
+    font-size: var(--font-size-small);
+    line-height: var(--line-height-small);
+    color: var(--color-secondary);
+  }
+
+  .description {
+    margin-top: var(--margin-s);
+    font-size: var(--font-size-small);
+    line-height: var(--line-height-small);
+  }
+
+  @media (hover: hover) {
+    .container {
+      &:hover {
+        .title {
+          color: var(--color-primary);
+        }
+
+        .thumbnail {
+          position: relative;
+
+          &::before {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            content: "";
+            background-color: var(--color-primary);
+            mix-blend-mode: screen;
+          }
+        }
+      }
+    }
+  }
+</style>
