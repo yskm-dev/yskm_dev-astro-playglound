@@ -1,5 +1,5 @@
-export const SITE_NAME = import.meta.env.SITE_NAME;
-export const SITE_URL = import.meta.env.SITE_URL;
+export const PUBLIC_SITE_NAME = import.meta.env.PUBLIC_SITE_NAME;
+export const PUBLIC_SITE_URL = import.meta.env.PUBLIC_SITE_URL;
 export const SITE_MAP = {
   slug: "",
   title: "yskm_dev",
