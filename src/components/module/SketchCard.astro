@@ -11,6 +11,7 @@ const { sketch } = Astro.props as Props;
   href={sketch.url}
   target="_blank"
   rel="noopener noreferrer"
+  aria-label={`${sketch.title}（新しいタブで開く）`}
   class={`container  ${sketch}`}
 >
   <div class="thumbnail">
@@ -18,7 +19,7 @@ const { sketch } = Astro.props as Props;
       src={`${sketch.image.url}?w=384&h=136`}
       width={384}
       height={136}
-      alt={sketch.image.alt}
+      alt={sketch.image.alt || sketch.title}
     />
   </div>
   <div>

@@ -63,10 +63,11 @@ const isNoIndex = _noIndex || pageInfo?.isNoIndex || false;
     </script>
   </head>
   <body>
+    <a href="#main-content" class="skip-link">メインコンテンツへスキップ</a>
     <Drawer />
     <div class="wrapper">
       <Header />
-      <main>
+      <main id="main-content">
         <div class="container">
           <slot />
         </div>
@@ -88,8 +89,25 @@ const isNoIndex = _noIndex || pageInfo?.isNoIndex || false;
     width: 100%;
   }
 
+  .skip-link {
+    position: absolute;
+    top: rem(-100);
+    left: var(--margin-s);
+    z-index: 9999;
+    padding: var(--margin-xs) var(--margin-m);
+    font-size: var(--font-size-base);
+    color: var(--color-background);
+    text-decoration: none;
+    background-color: var(--color-text);
+    border-radius: rem(4);
+
+    &:focus {
+      top: var(--margin-s);
+    }
+  }
+
   .container {
-    max-width: calc(rem(640) + var(--margin-l) * 2);
+    max-width: calc(rem(680) + var(--margin-l) * 2);
     padding: var(--margin-xxl) var(--margin-l) 0;
     margin: auto;
   }

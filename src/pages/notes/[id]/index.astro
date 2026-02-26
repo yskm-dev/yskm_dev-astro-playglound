@@ -218,7 +218,7 @@ Astro.response.headers.set(
   }
 
   .content :global(p) {
-    margin-block: var(--margin-s);
+    margin-block: var(--margin-m);
   }
 
   .content :global(blockquote) {
@@ -245,21 +245,27 @@ Astro.response.headers.set(
   }
 
   .content :global(h2) {
-    padding-bottom: var(--margin-xs);
+    padding-left: var(--margin-m);
     margin-top: var(--margin-xl);
     margin-bottom: var(--margin-m);
-    font-size: var(--font-size-heading-2);
+    font-size: rem(26);
     font-weight: 600;
     line-height: var(--line-height-heading-2);
-    border-bottom: rem(1) solid var(--color-border);
+    border-left: rem(4) solid var(--color-primary);
+
+    @include mq-lt("md") {
+      font-size: rem(22);
+    }
   }
 
   .content :global(h3) {
+    padding-left: var(--margin-s);
     margin-top: var(--margin-l);
     margin-bottom: var(--margin-m);
     font-size: var(--font-size-heading-3);
     font-weight: 600;
     line-height: var(--line-height-heading-3);
+    border-left: rem(4) solid var(--color-secondary);
   }
 
   .content :global(h4) {
@@ -318,9 +324,11 @@ Astro.response.headers.set(
       display: block;
       padding: rem(4) rem(8);
       font-size: var(--font-size-small);
-      color: #24292e;
+      color: #e1e4e8;
       content: attr(data-filename);
-      background-color: var(--color-syntax-blue);
+      background-color: #484f58; // ミュートなグレーブルー
+
+      // background-color: var(--color-syntax-blue);
       border-radius: 0 0 rem(4);
     }
 
@@ -429,9 +437,10 @@ Astro.response.headers.set(
     }
   }
 
-  .content :global(p > code) {
+  .content :global(p > code),
+  .content :global(h3 code),
+  .content :global(ul code) {
     padding: rem(2) rem(4);
-    font-size: var(--font-size-middle);
     color: var(--color-syntax-text);
     background-color: var(--color-syntax-bg);
     border-radius: rem(4);

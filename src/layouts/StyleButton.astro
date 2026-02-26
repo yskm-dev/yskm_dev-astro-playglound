@@ -5,7 +5,8 @@
 <app-style-button>
   <button
     class="styleButton"
-    aria-label="見た目を切り替える"
+    aria-label="ダークモードを切り替える"
+    aria-pressed="false"
     data-theme=""
     data-style-button
   >
@@ -38,6 +39,12 @@
 
     initialized() {
       this.currentTheme = ThemeManager.getTheme;
+
+      const isDark =
+        this.currentTheme === "dark" ||
+        (this.currentTheme === "system" &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches);
+      this.button?.setAttribute("aria-pressed", String(isDark));
 
       this.button?.addEventListener("click", this.toggleStyle.bind(this));
     }
@@ -80,6 +87,7 @@
       }
       this.currentTheme = newTheme;
       ThemeManager.updateTheme(newTheme);
+      this.button?.setAttribute("aria-pressed", String(newTheme === "dark"));
 
       this.update();
     }
